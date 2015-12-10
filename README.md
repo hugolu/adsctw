@@ -27,4 +27,18 @@ Archive:  ml-1m.zip
 | RATINGS | UserID, MovieID, Rating, Timestamp |
 | MOVIE_GENRES | MovieID, GenresID |
 
-___
+## 資料預處理
+
+HIVE只能處理field delimiter為單一字元的檔案，但MovieLens提供的檔案欄位是由```::```分隔，並且欄位內的值可能出現```:```，因此預處理選擇使用```<tab>```作為欄位分隔符號。
+```
+$ cd ml-1m
+$ sed 's/::/\t/g' < users.dat > users.dat.2
+$ sed 's/::/\t/g' < movies.dat > movies.dat.2
+$ sed 's/::/\t/g' < ratings.dat > ratings.dat.2
+```
+
+另外，由於對HIVE提供的ETL功能不熟悉，選擇透過ruby script處理MOVIES產生MOVIE_GENRES。
+```
+$ awk -F '\t' '{print $1 "\t" $3}' < movies.dat.2 > movie_genres.dat
+$ ./movie_genres.rb movie_genres.dat movie_genres.dat.2
+```
