@@ -238,7 +238,7 @@ ORDER BY Occupation, Score DESC;
 
 ## 找出Top5
 
-使用```RANK()```找出各群組前五名的資料。
+參考[How to select TOP N rows from a table for each group?](http://www.sql-ex.ru/help/select16.php)，使用```RANK()```找出各群組前五名的資料。
 ```
 SELECT Occupation, Genres, Score
 FROM (
