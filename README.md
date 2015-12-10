@@ -163,8 +163,9 @@ Time taken: 0.04 seconds, Fetched: 5 row(s)
 
 將ratings表格中關於MovieID的關係，轉換成對應Genres。
 ```
-SELECT UserID, ratings.MovieID, Genres, Rating FROM ratings, movie_genres
-WHERE ratings.MovieID = movie_genres.MovieID;
+SELECT UserID, ratings.MovieID, Genres, Rating
+FROM ratings, movie_genres
+WHERE ratings.MovieID = movie_genres.MovieID
 ```
 
 前十筆資料，欄位依序為UserID、MovieID、Genres、Rating
@@ -185,12 +186,12 @@ WHERE ratings.MovieID = movie_genres.MovieID;
 
 將剛剛產生資料的UserID轉換成對應Occupation。
 ```
-SELECT Occupation, Genres, Rating FROM (
-  SELECT UserID, ratings.MovieID, Genres, Rating FROM ratings, movie_genres
-  WHERE ratings.MovieID = movie_genres.MovieID
-) r
-LEFT JOIN users u ON u.UserID = r.UserID
-limit 10;
+SELECT Occupation, Genres, Rating
+FROM (
+    SELECT UserID, Genres, Rating
+    FROM ratings, movie_genres
+    WHERE ratings.MovieID = movie_genres.MovieID
+    ) r LEFT JOIN users u ON u.UserID = r.UserID;
 ```
 
 前十筆資料，欄位依序為Occupation, Genres, Rating
@@ -211,11 +212,12 @@ limit 10;
 
 根據剛剛產生的資料，計算每個職業別對於每個電影分類的平均分數。
 ```
-SELECT Occupation, Genres, AVG(cast(Rating as float)) Score FROM (
-  SELECT UserID, ratings.MovieID, Genres, Rating FROM ratings, movie_genres
-  WHERE ratings.MovieID = movie_genres.MovieID
-) r
-LEFT JOIN users u ON u.UserID = r.UserID
+SELECT Occupation, Genres, AVG(cast(Rating as float)) Score
+FROM (
+    SELECT UserID, Genres, Rating
+    FROM ratings, movie_genres
+    WHERE ratings.MovieID = movie_genres.MovieID
+    ) LEFT JOIN users u ON u.UserID = r.UserID
 GROUP BY Occupation, Genres
 ORDER BY Occupation, Score DESC;
 ```
@@ -238,17 +240,20 @@ ORDER BY Occupation, Score DESC;
 
 使用```RANK()```找出各群組前五名的資料。
 ```
-SELECT Occupation, Genres, Score FROM (
-  SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num FROM (
-    SELECT Occupation, Genres, AVG(cast(Rating as float)) Score FROM (
-      SELECT UserID, ratings.MovieID, Genres, Rating FROM ratings, movie_genres
-      WHERE ratings.MovieID = movie_genres.MovieID
-    ) r
-    LEFT JOIN users u ON u.UserID = r.UserID
-    GROUP BY Occupation, Genres
-    ORDER BY Occupation, Score DESC
-  ) ratings2
-) X
+SELECT Occupation, Genres, Score
+FROM (
+    SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num
+    FROM (
+        SELECT Occupation, Genres, AVG(cast(Rating as float)) Score
+        FROM (
+            SELECT UserID, Genres, Rating
+            FROM ratings, movie_genres
+            WHERE ratings.MovieID = movie_genres.MovieID
+        ) r LEFT JOIN users u ON u.UserID = r.UserID
+        GROUP BY Occupation, Genres
+        ORDER BY Occupation, Score DESC
+    ) r2
+) r3
 WHERE num <= 5;
 ```
 
@@ -306,24 +311,27 @@ INSERT INTO Occupations (occupation, description) values
 
 輸出容易閱讀的結果
 ```
-SELECT Occupations.Description, Genres, Score FROM (
-  SELECT Occupation, Genres, Score FROM (
-    SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num FROM (
-      SELECT Occupation, Genres, AVG(cast(Rating as float)) Score FROM (
-        SELECT UserID, ratings.MovieID, Genres, Rating FROM ratings, movie_genres
-        WHERE ratings.MovieID = movie_genres.MovieID
-      ) r
-      LEFT JOIN users u ON u.UserID = r.UserID
-      GROUP BY Occupation, Genres
-      ORDER BY Occupation, Score DESC
-    ) ratings2
-  ) X
-  WHERE num <= 5
-) ratings3
-LEFT JOIN Occupations ON Occupations.Occupation = ratings3.Occupation;
+SELECT o.Description, Genres, Score
+FROM (
+    SELECT Occupation, Genres, Score
+    FROM (
+        SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num
+        FROM (
+            SELECT Occupation, Genres, AVG(cast(Rating as float)) Score
+            FROM (
+                SELECT UserID, Genres, Rating
+                FROM ratings, movie_genres
+                WHERE ratings.MovieID = movie_genres.MovieID
+            ) r LEFT JOIN users u ON u.UserID = r.UserID
+            GROUP BY Occupation, Genres
+            ORDER BY Occupation, Score DESC
+        ) r2
+    ) r3
+    WHERE num <= 5
+) r4 LEFT JOIN Occupations o ON o.Occupation = r4.Occupation;
 ```
 
-登登，答案是
+登登登，答案是
 ```
 other	Film-Noir	4.058154787931788
 other	Documentary	3.8545454545454545
