@@ -42,3 +42,82 @@ $ sed 's/::/\t/g' < ratings.dat > ratings.dat.2
 $ awk -F '\t' '{print $1 "\t" $3}' < movies.dat.2 > movie_genres.dat
 $ ./movie_genres.rb movie_genres.dat movie_genres.dat.2
 ```
+
+## 上傳資料
+
+把剛剛處理過的檔案上傳到HDFS。
+
+```
+$ hadoop fs -rm -r /user/hive/warehouse/movielens
+$ hadoop fs -mkdir /user/hive/warehouse/movielens
+$ hadoop fs -mkdir /user/hive/warehouse/movielens/users
+$ hadoop fs -mkdir /user/hive/warehouse/movielens/movies
+$ hadoop fs -mkdir /user/hive/warehouse/movielens/ratings
+$ hadoop fs -mkdir /user/hive/warehouse/movielens/movie_genres
+
+$ hadoop fs -put users.dat.2 /user/hive/warehouse/movielens/users
+$ hadoop fs -put movies.dat.2 /user/hive/warehouse/movielens/movies
+$ hadoop fs -put ratings.dat.2 /user/hive/warehouse/movielens/ratings
+$ hadoop fs -put movie_genres.dat.2 /user/hive/warehouse/movielens/movie_genres
+
+$ hadoop fs -ls /user/hive/warehouse/movielens/users
+$ hadoop fs -ls /user/hive/warehouse/movielens/movies
+$ hadoop fs -ls /user/hive/warehouse/movielens/ratings
+$ hadoop fs -ls /user/hive/warehouse/movielens/movie_genres
+```
+
+## 產生表格
+
+使用上傳的檔案產生HIVE Table。
+
+首先，登入HIVE SQL操作介面。
+```
+$ hive
+```
+
+產生users表格
+```
+DROP TABLE users;
+CREATE EXTERNAL TABLE users (
+UserID      int,
+Gender      string,
+Age         int,
+Occupation  int,
+Zipcode     int)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/hive/warehouse/movielens/users';
+```
+
+產生movies表格
+```
+DROP TABLE movies;
+CREATE EXTERNAL TABLE movies (
+MovieID     int,
+Title       string,
+Genres      string
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/hive/warehouse/movielens/movies';
+```
+
+產生ratings表格
+```
+DROP TABLE ratings;
+CREATE EXTERNAL TABLE ratings (
+UserID      int,
+MovieID     int,
+Rating      int,
+TS          int)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/hive/warehouse/movielens/ratings';
+```
+
+產生movie_genres表格
+```
+DROP TABLE movie_genres;
+CREATE EXTERNAL TABLE movie_genres (
+MovieID     int,
+Genres      string)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION '/user/hive/warehouse/movielens/movie_genres';
+```
