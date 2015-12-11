@@ -13,8 +13,9 @@ $ hive -f top10_best_sellers.sql  # 找出10個最受歡迎的熱門商品
 ```
 ___
 
-## 下載&解壓檔案
+## 準備工作
 
+下載、解壓檔案。
 ```
 $ wget http://tinyurl.com/hdfiles-zip
 $ rm -r hdfiles
@@ -22,16 +23,23 @@ $ mkdir hdfiles
 $ unzip hdfiles-zip -d hdfiles
 ```
 
-## 匯入mysql資料庫
-
+在mysql中創建test資料庫，倒入retail_db.sql。
 ```
-mysql -uhive -phive -e "DROP DATABASE IF EXISTS test"
-mysql -uhive -phive -e "CREATE DATABASE test"
-mysql -uhive -phive test < hdfiles/retail_db.sql
-mysql -uhive -phive -e "SHOW TABLES" test
+$ mysql -uhive -phive -e "DROP DATABASE IF EXISTS test"
+$ mysql -uhive -phive -e "CREATE DATABASE test"
+$ mysql -uhive -phive test < hdfiles/retail_db.sql
+$ mysql -uhive -phive -e "SHOW TABLES" test
 ```
-## 手動產生表格
 
+## 手動產生hive表格
+
+登入mysql，手動匯出mysql資料
+```
+SELECT * FROM customers INTO outfile '/tmp/customers.txt' FIELDS TERMINATED BY '\t';
+SELECT * FROM departments INTO outfile '/tmp/departments.txt' FIELDS TERMINATED BY '\t';
+```
+
+登入hive，創建```customers```表格後載入資料。
 ```
 DROP TABLE customers;
 CREATE TABLE customers (
@@ -50,6 +58,7 @@ STORED AS TEXTFILE;
 load data local inpath '/tmp/customers.txt' into table customers;
 ```
 
+創建```departments```表格後載入資料。
 ```
 DROP TABLE departments;
 CREATE TABLE departments (
@@ -61,8 +70,9 @@ STORED AS TEXTFILE;
 load data local inpath '/tmp/departments.txt' into table departments;
 ```
 
-## 使用Sqoop匯出表格資料
+## 自動產生hive表格
 
+使用Sqoop匯出表格資料。
 ```
 hadoop fs -rm -r /user/hive/warehouse/retail
 
@@ -77,15 +87,14 @@ sqoop import-all-tables \
     --warehouse-dir=/user/hive/warehouse/retail
 ```
 
-# 上傳schema
-
+上傳schema。
 ```
 hadoop fs -rm -r /user/hive/warehouse/schema
 hadoop fs -mkdir -p /user/hive/warehouse/schema
 hadoop fs -put *.avsc /user/hive/warehouse/schema
 ```
 
-## 自動產生表格
+創建categories外部表格，資料指向sqoop匯出的目錄。
 ```
 DROP TABLE categories;
 CREATE EXTERNAL TABLE categories
@@ -96,6 +105,8 @@ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
 LOCATION 'hdfs:///user/hive/warehouse/retail/categories'
 TBLPROPERTIES ('avro.schema.url'='hdfs:///user/hive/warehouse/schema/categories.avsc');
 ```
+
+創建products外部表格，資料指向sqoop匯出的目錄。
 ```
 DROP TABLE products;
 CREATE EXTERNAL TABLE products
@@ -106,6 +117,8 @@ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
 LOCATION 'hdfs:///user/hive/warehouse/retail/products'
 TBLPROPERTIES ('avro.schema.url'='hdfs:///user/hive/warehouse/schema/products.avsc');
 ```
+
+創建orders外部表格，資料指向sqoop匯出的目錄。
 ```
 DROP TABLE orders;
 CREATE EXTERNAL TABLE orders
@@ -116,6 +129,8 @@ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
 LOCATION 'hdfs:///user/hive/warehouse/retail/orders'
 TBLPROPERTIES ('avro.schema.url'='hdfs:///user/hive/warehouse/schema/orders.avsc');
 ```
+
+創建order_items外部表格，資料指向sqoop匯出的目錄。
 ```
 DROP TABLE order_items;
 CREATE EXTERNAL TABLE order_items
