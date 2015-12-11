@@ -285,7 +285,7 @@ LOCATION '/user/hive/warehouse/movielens/occupations';
 
 根據ml-1m/README對於Occupation的描述，寫入資料。
 ```
-INSERT INTO Occupations (occupation, description) values
+INSERT INTO occupations (occupation, description) values
 (0, "other"),
 (1, "academic/educator"),
 (2, "artist"),
@@ -328,7 +328,7 @@ FROM (
         ) r2
     ) r3
     WHERE num <= 5
-) r4 LEFT JOIN Occupations o ON o.Occupation = r4.Occupation;
+) r4 LEFT JOIN occupations o ON o.Occupation = r4.Occupation;
 ```
 
 登登登，答案是
