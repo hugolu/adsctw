@@ -60,7 +60,7 @@ $ ./movie_genres.rb movie_genres.dat movie_genres.dat.2
 
 ```
 $ hadoop fs -rm -r /user/hive/warehouse/movielens
-$ hadoop fs -mkdir /user/hive/warehouse/movielens
+$ hadoop fs -mkdir -p /user/hive/warehouse/movielens
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/users
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/movies
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/ratings
