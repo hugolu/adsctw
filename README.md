@@ -6,6 +6,15 @@
 
 資料來自[MovieLens](http://grouplens.org/datasets/movielens/)，應用上課學到的知識找出各種職業對電影類別評分的Top5。
 
+如果沒有時間詳讀以下內容，可透過以下指令快速得到結果。
+```
+$ git clone https://github.com/hugolu/adsc.git
+$ cd adsc
+$ ./prepare.sh
+$ hive -f adsc.sql
+```
+
+___
 下載資料並解壓縮：
 ```
 $ wget http://files.grouplens.org/datasets/movielens/ml-1m.zip
@@ -439,3 +448,4 @@ writer	War	3.7983933661570357
 writer	Animation	3.699773413897281
 writer	Musical	3.669849430774881
 ```
+> Time taken: 25.585 seconds, Fetched: 105 row(s)
