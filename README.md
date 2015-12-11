@@ -15,6 +15,8 @@ $ hive -f adsc.sql
 ```
 
 ___
+# 下載資料
+
 下載資料並解壓縮：
 ```
 $ wget http://files.grouplens.org/datasets/movielens/ml-1m.zip
@@ -36,7 +38,7 @@ Archive:  ml-1m.zip
 | RATINGS | UserID, MovieID, Rating, Timestamp |
 | MOVIE_GENRES | MovieID, GenresID |
 
-## 資料預處理
+## 預處理資料
 
 HIVE只能處理field delimiter為單一字元的檔案，但MovieLens提供的檔案欄位是由```::```分隔，並且欄位內的值可能出現```:```，因此預處理選擇使用```<tab>```作為欄位分隔符號。
 ```
