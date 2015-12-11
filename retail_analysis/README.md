@@ -126,3 +126,33 @@ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
 LOCATION 'hdfs:///user/hive/warehouse/retail/order_items'
 TBLPROPERTIES ('avro.schema.url'='hdfs:///user/hive/warehouse/schema/order_items.avsc');
 ```
+
+## 找出 Top 10 歡迎類別
+
+```
+SELECT c.category_name, count(order_item_quantity) as count
+FROM order_items oi
+INNER JOIN products p ON oi.order_item_product_id = p.product_id
+INNER JOIN categories c ON c.category_id = p.product_category_id
+GROUP BY c.category_name
+ORDER BY count desc
+limit 10;
+```
+
+## 找出 Top 10 歡迎商品
+
+```
+SELECT p.product_id, p.product_name, r.revenue
+FROM products p
+INNER JOIN (
+    SELECT oi.order_item_product_id, sum(oi.order_item_subtotal) as revenue
+    FROM order_items oi
+    INNER JOIN orders o ON oi.order_item_order_id = o.order_id
+    WHERE o.order_status <> 'CANCELED'
+    AND o.order_status <> 'SUSPECTED_FRAUD'
+    GROUP BY oi.order_item_product_id
+) r
+ON p.product_id = r.order_item_product_id
+ORDER BY r.revenue desc
+limit 10;
+```
