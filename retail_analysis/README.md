@@ -4,12 +4,13 @@
 
 想跳過解說，可以執行下面流程，快速得到結果。
 ```
-$ ./prepare.sh
-$ hive -f load.sql
-$ ./import.sh
-$ hive -f create_tables.sql
+$ ./prepare.sh                    # 下載、解壓、匯入mysql
+$ hive -f load.sql                # sqoop: mysql→hive
+$ ./import.sh                     # 手動產生表格
+$ hive -f create_tables.sql       # 自動產生表格
+$ hive -f top10_catetory.sql      # 找出10個最受歡迎的熱門商品類別
+$ hive -f top10_best_sellers.sql  # 找出10個最受歡迎的熱門商品
 ```
-
 ___
 
 ## 下載&解壓檔案
