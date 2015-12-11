@@ -5,7 +5,7 @@
 想跳過解說，可以執行下面流程，快速得到結果。
 ```
 $ ./prepare.sh
-$ hive -f import.sql
+$ hive -f load.sql
 $ ./import.sh
 $ hive -f create_tables.sql
 ```
