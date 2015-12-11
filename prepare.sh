@@ -15,7 +15,7 @@ awk -F '\t' '{print $1 "\t" $3}' < movies.dat.2 > movie_genres.dat
 
 # upload data
 hadoop fs -rm -r /user/hive/warehouse/movielens
-hadoop fs -mkdir /user/hive/warehouse/movielens
+hadoop fs -mkdir -p /user/hive/warehouse/movielens
 hadoop fs -mkdir /user/hive/warehouse/movielens/users
 hadoop fs -mkdir /user/hive/warehouse/movielens/movies
 hadoop fs -mkdir /user/hive/warehouse/movielens/ratings
