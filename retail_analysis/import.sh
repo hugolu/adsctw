@@ -11,3 +11,7 @@ sqoop import-all-tables \
     --compression-codec=snappy \
     --as-avrodatafile \
     --warehouse-dir=/user/hive/warehouse/retail
+
+hadoop fs -rm -r /user/hive/warehouse/schema
+hadoop fs -mkdir -p /user/hive/warehouse/schema
+hadoop fs -put *.avsc /user/hive/warehouse/schema
