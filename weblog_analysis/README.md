@@ -91,12 +91,18 @@ SELECT * FROM intermediate_access_logs;
 
 查詢最常造訪的前十個產品URL。
 ```
-SELECT * FROM tokenized_access_logs limit 10;
-hadoop@vagrant-ubuntu-trusty-64:~/adsc/weblog_analysis$ cat top10_url.sql
 SELECT count(*) as count, url
 FROM tokenized_access_logs
 WHERE url LIKE "%\/product\/%"
 GROUP BY url
 ORDER BY count desc
 LIMIT 10;
+```
+___
+## 解釋ETL過程的Regex
+
+觀察原始資料
+```
+$ head -n1 hdfiles/access.log.2
+79.133.215.123 - - [14/Jun/2014:10:30:13 -0400] "GET /home HTTP/1.1" 200 1671 "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36"
 ```
