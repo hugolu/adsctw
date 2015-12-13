@@ -86,3 +86,17 @@ SELECT * FROM intermediate_access_logs;
 比較中間表格、最終表格
 - 相同處：都可以查詢
 - 相異處：最終表格可以insert，但中間表格的regex無法反向，不能insert data
+
+## 進階查詢
+
+查詢最常造訪的前十個產品URL。
+```
+SELECT * FROM tokenized_access_logs limit 10;
+hadoop@vagrant-ubuntu-trusty-64:~/adsc/weblog_analysis$ cat top10_url.sql
+SELECT count(*) as count, url
+FROM tokenized_access_logs
+WHERE url LIKE "%\/product\/%"
+GROUP BY url
+ORDER BY count desc
+LIMIT 10;
+```
