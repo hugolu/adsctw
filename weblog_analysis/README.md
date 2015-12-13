@@ -101,8 +101,16 @@ LIMIT 10;
 ___
 ## 解釋ETL過程的Regex
 
-觀察原始資料
 ```
 $ head -n1 hdfiles/access.log.2
 79.133.215.123 - - [14/Jun/2014:10:30:13 -0400] "GET /home HTTP/1.1" 200 1671 "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36"
 ```
+
+觀察原始資料各欄位
+- ```79.133.215.123``` for ip
+- ```- -``` 無意義，忽略
+- ```[14/Jun/2014:10:30:13 -0400]``` for day
+- ```"GET /home HTTP/1.1"``` for method, url, http_version
+- ```200 1671``` for code1, code2
+- ```"-"``` for dash
+- ```"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36"``` for user_agent
