@@ -66,21 +66,18 @@ INSERT INTO occupations (occupation, description) values
 (20, "writer");
 
 -- Find top 5 movie genres rated by each occupation
-SELECT o.Description, Genres, Score
+SELECT Description, Genres, Score
 FROM (
-    SELECT Occupation, Genres, Score
+    SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num
     FROM (
-        SELECT Occupation, Genres, Score, RANK() OVER(PARTITION BY Occupation ORDER BY Score DESC) num
+        SELECT Occupation, Genres, AVG(cast(Rating as float)) Score
         FROM (
-            SELECT Occupation, Genres, AVG(cast(Rating as float)) Score
-            FROM (
-                SELECT UserID, Genres, Rating
-                FROM ratings, movie_genres
-                WHERE ratings.MovieID = movie_genres.MovieID
-            ) r LEFT JOIN users u ON u.UserID = r.UserID
-            GROUP BY Occupation, Genres
-            ORDER BY Occupation, Score DESC
-        ) r2
-    ) r3
-    WHERE num <= 5
-) r4 LEFT JOIN occupations o ON o.Occupation = r4.Occupation;
+            SELECT UserID, Genres, Rating
+            FROM ratings, movie_genres
+            WHERE ratings.MovieID = movie_genres.MovieID
+        ) r LEFT JOIN users u ON u.UserID = r.UserID
+        GROUP BY Occupation, Genres
+        ORDER BY Occupation, Score DESC
+    ) r2
+) r3 LEFT JOIN occupations o ON o.Occupation = r3.Occupation
+WHERE num <= 5;
