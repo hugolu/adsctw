@@ -1,6 +1,6 @@
-## 銷售組合分析
+# 銷售組合分析
 
-# Question: Find 10 most popular item combinations in orders
+## Question: Find 10 most popular item combinations in orders
 
 ## 進入spark-shell
 ```
@@ -134,7 +134,7 @@ val product_quantity_with_order_id = joined_orders_products.map { joined_values 
 ```
 
 以上作用等同於SQL command:
-```
+```SQL
 SELECT product_id, order_item_order_id, order_item_quantity, product_name
 FROM order_items LEFT JOIN products ON order_items.order_item_product_id = products.product_id;
 ```
