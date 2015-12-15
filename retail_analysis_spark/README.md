@@ -2,11 +2,13 @@
 
 # Question: Find 10 most popular item combinations in orders
 
+## 進入spark-shell
 ```
 $ spark-shell --jars hdfiles/avro-mapred.jar \
 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer
 ```
 
+## 載入DRR
 ```
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.mapred.{AvroInputFormat, AvroWrapper}
@@ -21,10 +23,32 @@ val order_items = sc.hadoopFile[AvroWrapper[GenericRecord], NullWritable, AvroIn
 val products = sc.hadoopFile[AvroWrapper[GenericRecord], NullWritable, AvroInputFormat[GenericRecord]](products_path)
 ```
 
-```
-// Next, we extract the fields from order_items and products that we care about
-// and get a list of every product, its name and quantity, grouped by order
+### order_items
+| Field                    | Type       | Null | Key | Default | Extra          |
+|--------------------------|------------|------|-----|---------|----------------|
+| order_item_id            | int(11)    | NO   | PRI | NULL    | auto_increment |
+| order_item_order_id      | int(11)    | NO   |     | NULL    |                |
+| order_item_product_id    | int(11)    | NO   |     | NULL    |                |
+| order_item_quantity      | tinyint(4) | NO   |     | NULL    |                |
+| order_item_subtotal      | float      | NO   |     | NULL    |                |
+| order_item_product_price | float      | NO   |     | NULL    |                |
 
+### products
+| Field               | Type         | Null | Key | Default | Extra          |
+|---------------------|--------------|------|-----|---------|----------------|
+| product_id          | int(11)      | NO   | PRI | NULL    | auto_increment |
+| product_category_id | int(11)      | NO   |     | NULL    |                |
+| product_name        | varchar(45)  | NO   |     | NULL    |                |
+| product_description | varchar(255) | NO   |     | NULL    |                |
+| product_price       | float        | NO   |     | NULL    |                |
+| product_image       | varchar(255) | NO   |     | NULL    |                |
+
+## 找出每筆訂單中，商品與銷售數量的關係
+
+Next, we extract the fields from order_items and products that we care about and get a list of every product, its name and quantity, grouped by order.
+
+### 從 order_itmes 找出 ( product_id , (order_id, quantity) ) 的關係
+```
 // Map order_items to ( product_id , (order_id, quantity) )
 
 val orders_mapped = order_items.map { order_item =>
@@ -46,6 +70,13 @@ val orders_mapped = order_items.map { order_item =>
 }
 ```
 
+以上作用等同於SQL command:
+```SQL
+SELECT order_item_product_id, order_item_order_id, order_item_quantity
+FROM order_items;
+```
+
+### 從 products 找出 ( product_id, product_name ) 的關係
 ```
 // Map products to ( product_id, product_name )
 
@@ -65,6 +96,12 @@ val products_mapped = products.map { product =>
 }
 ```
 
+以上作用等同於SQL command:
+```SQL
+SELECT product_id, product_name FROM products;
+```
+
+### 合併前兩個關係，產生 ( product_id, ( (order_id, quantity), product_name ) )
 ```
 // Join the mapped orders and products => ( product_id, ( (order_id, quantity),product_name ) )
 
@@ -96,6 +133,13 @@ val product_quantity_with_order_id = joined_orders_products.map { joined_values 
   }
 ```
 
+以上作用等同於SQL command:
+```
+SELECT product_id, order_item_order_id, order_item_quantity, product_name
+FROM order_items LEFT JOIN products ON order_items.order_item_product_id = products.product_id;
+```
+
+## 找出訂單中，兩兩商品組合的貢獻度(銷售量相乘)
 ```
 // Finally, group all the (quantity, product_name) values by order_id
 // so we get all product quantities of each order_id
@@ -130,6 +174,7 @@ val contributions_of_product_combos = all_product_quantities_by_order_id.map { o
 }
 ```
 
+## 統計銷售組合的貢獻度
 ```
 // Sum up the contributions of each product_name_pair
 
@@ -155,6 +200,7 @@ val contribution_as_key = total_contribution_of_each_combo.map{ pair =>
 val sorted_contributions = contribution_as_key.sortByKey(false)
 ```
 
+## 找出前十名熱門銷售組合
 ```
 // Get top 10
 val top_ten_pairs = sorted_contributions.take(10)
