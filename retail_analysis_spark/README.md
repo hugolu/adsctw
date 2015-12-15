@@ -76,6 +76,12 @@ SELECT order_item_product_id, order_item_order_id, order_item_quantity
 FROM order_items;
 ```
 
+**orders_mapped** 範例：
+
+| product_id | order_id | quantity |
+|------------|----------|----------|
+| P12345     | 15120601 | 5        |
+
 ### 從 products 找出 ( product_id, product_name ) 的關係
 ```
 // Map products to ( product_id, product_name )
@@ -101,18 +107,31 @@ val products_mapped = products.map { product =>
 SELECT product_id, product_name FROM products;
 ```
 
+**products_mapped** 範例：
+
+| product_id | product_name |
+|------------|--------------|
+| P12345     | Office 360   |
+
 ### 合併前兩個關係，產生 ( product_id, ( (order_id, quantity), product_name ) )
 ```
 // Join the mapped orders and products => ( product_id, ( (order_id, quantity),product_name ) )
 
 val joined_orders_products = orders_mapped.join(products_mapped)
+```
 
+**products_mapped** 範例：
+
+| product_id | order_id | quantity | product_name |
+|------------|----------|----------|--------------|
+| P12345     | 15120601 | 5        | Office 360   |
+
+### 整理剛剛合併的結果，轉化成 ( order_id, (quantity, product_name) )
+```
 // Now transform to make order_id as key,
 // and a singe product name and quantity as value
 // result => ( order_id, (quantity, product_name) )
-```
 
-```
 val product_quantity_with_order_id = joined_orders_products.map { joined_values =>
 
     // Extract values from the joined values
@@ -138,6 +157,12 @@ val product_quantity_with_order_id = joined_orders_products.map { joined_values 
 SELECT product_id, order_item_order_id, order_item_quantity, product_name
 FROM order_items LEFT JOIN products ON order_items.order_item_product_id = products.product_id;
 ```
+
+**product_quantity_with_order_id** 範例：
+
+| order_id | quantity | product_name |
+|----------|----------|--------------|
+| 15120601 | 5        | Office 360   |
 
 ## 找出訂單中，兩兩商品組合的貢獻度(銷售量相乘)
 ```
@@ -174,7 +199,13 @@ val contributions_of_product_combos = all_product_quantities_by_order_id.map { o
 }
 ```
 
-## 統計銷售組合的貢獻度
+**list_of_combo_contributions_in_order** 範例：
+
+| order_id | product_name_pair | combo_contribution |
+|----------|-------------------|--------------------|
+| 0820001  | AAAA, BBBB        | 8                  |
+
+## 統計銷售組合的貢獻度 (去掉order_id)
 ```
 // Sum up the contributions of each product_name_pair
 
@@ -186,6 +217,13 @@ val combo_contributions = contributions_of_product_combos.flatMap { pair =>
 val total_contribution_of_each_combo = combo_contributions.reduceByKey( (a,b) => a+b )
 ```
 
+**combo_contributions** 範例：
+
+| product_name_pair | combo_contribution |
+|-------------------|--------------------|
+| AAAA, BBBB        | 8                  |
+
+把```product_name_pair```、```combo_contribution```互換，然後依照```product_name_pair```排序
 ```
 // Sort all product pairs by contribution
 
@@ -199,6 +237,12 @@ val contribution_as_key = total_contribution_of_each_combo.map{ pair =>
 
 val sorted_contributions = contribution_as_key.sortByKey(false)
 ```
+
+**sorted_contributions** 範例：
+
+| combo_contribution | product_name_pair |
+|--------------------|-------------------|
+| 8                  | AAAA, BBBB        |
 
 ## 找出前十名熱門銷售組合
 ```
