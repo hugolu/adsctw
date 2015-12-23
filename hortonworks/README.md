@@ -21,5 +21,59 @@
 
 ## 調整 ##
 
+### 啟動前設定 ###
 - 記憶大小：VirtualBox→設定值→系統→基本記憶體，設定為4G (如果你的記憶體足夠，給8G也無妨)
 - 網路介面：VirtualBox→設定值→系統→網路→介面卡2，附加到「僅限主機」介面卡
+
+### 啟動後設定 ###
+系統啟動後，使用VirtualBox VM使用者操作介面登入系統
+- user: root
+- pass: hadoop
+
+登入後，修改密碼，先給個複雜的密碼 (CentOS改密碼很龜毛)，然後再改回簡單容易記憶的密碼 XD
+```
+# passwd
+Changing password for user root.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+```
+
+設定一般權限的使用者帳號 (使用這個帳號登入練習)
+```
+# adduser adsctw
+# passwd adsctw
+Changing password for user adsctw.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+```
+
+設定網路，如果要讓外面的世界(Host OS)可以連接虛擬機器上的世界(Guest OS)，我通常會加一個```host-only network interface```，這樣就算沒有網路也可以透過內部的網域連進去做實驗。
+在VirtualBox上新增一個「僅限主機」介面卡之後，在Host OS會多一張虛擬的網路卡，以我為例，看到的網卡IP是192.168.33.1，所以Guest OS裡面的網路介面2設定方法為
+```
+# vi /etc/sysconfig/network-scripts/ifcfg-eth1
+```
+加入以下內容
+```
+DEVICE="eth1"
+
+IPV6INIT="no"
+ONBOOT="yes"
+TYPE="Ethernet"
+
+NM_CONTROLLED=no
+PEERDNS=no
+
+IPADDR="192.168.33.11"
+NETMASK="255.255.255.0"
+```
+設定好之後，執行以下指令讓設定發生
+```
+# service network restart
+```
+
+好吧，如果覺得這樣設定有難度，使用以下方式也可以
+```
+# ifconfig eth1 192.168.33.11
+```
