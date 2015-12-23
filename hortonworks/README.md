@@ -18,3 +18,8 @@
 等待下載時，建議瞄一下說明文件。
 - [Install Guide for VirtualBox](http://hortonworks.com/wp-content/uploads/2015/07/Import_on_Vbox_7_20_2015.pdf)
 - [Install Guild for VMware](http://hortonworks.com/wp-content/uploads/2015/07/Import_on_VMware_7_20_2015.pdf)
+
+## 調整 ##
+
+- 記憶大小：VirtualBox→設定值→系統→基本記憶體，設定為4G (如果你的記憶體足夠，給8G也無妨)
+- 網路介面：VirtualBox→設定值→系統→網路→介面卡2，附加到「僅限主機」介面卡
