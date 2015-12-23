@@ -4,6 +4,12 @@
 
 部分解法來自先前做過的練習 movielens，使用 Hive 做 ETL 的解法則參考 Cathleen Tsai 的想法。
 
+如果沒有時間詳讀以下內容，可透過以下指令快速得到結果。
+```
+$ ./prepare.sh
+$ hive -f adsc.sql
+```
+
 ___
 ## 下載資料
 
@@ -49,13 +55,11 @@ $ hadoop fs -mkdir -p /user/hive/warehouse/movielens
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/users
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/movies
 $ hadoop fs -mkdir /user/hive/warehouse/movielens/ratings
-$ hadoop fs -mkdir /user/hive/warehouse/movielens/movies_omni
 
 $ hadoop fs -put users.dat.2 /user/hive/warehouse/movielens/users
 $ hadoop fs -put movies.dat.2 /user/hive/warehouse/movielens/movies
 $ hadoop fs -put ratings.dat.2 /user/hive/warehouse/movielens/ratings
 ```
-
 
 ## 產生表格
 
@@ -106,7 +110,7 @@ LOCATION '/user/hive/warehouse/movielens/ratings';
 產生movies_omni表格
 ```
 DROP TABLE IF EXISTS movies_omni;
-CREATE EXTERNAL TABLE movies_omni (
+CREATE TABLE movies_omni (
 MovieID     int,
 Title       string,
 Genres      string
@@ -406,5 +410,8 @@ writer	War	3.7983933661570357
 writer	Animation	3.699773413897281
 writer	Musical	3.669849430774881
 ```
-> Time taken: 73.78 seconds, Fetched: 105 row(s)
->> hortonworks sandbox 是個吃資源的怪獸，跑起又很慢 (昏倒)
+
+- 使用 hortonworks sandbox VM - Time taken: 73.78 seconds
+- 使用原先在 ubuntu 上面自架的 hadoop - Time taken: 28.078 seconds
+
+> hortonworks 是個吃資源的怪獸，跑起又很慢 (昏倒)
