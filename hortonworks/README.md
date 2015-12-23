@@ -84,3 +84,20 @@ $ ssh adsctw@192.168.33.11
 adsctw@192.168.33.11's password:
 $
 ```
+---
+## 補充 ##
+
+使用```adsctw```登入系統，發現這個帳號沒有存取hdfs的權限，嘗試透過hortonworks網頁管理介面修改使用者權限，弄了半小時搞不定(摔筆)。幹脆土炮硬幹，透過root帳號登入系統修改一下hdfs設定
+```
+$ vi /etc/hadoop/2.3.2.0-2950/0/hdfs-site.xml
+```
+
+修改內容，把```false```改成```true```
+```
+<property>
+  <name>dfs.permissions.enabled</name>
+  <value>true</value>
+</property>
+```
+
+然後透過管理介面 http://192.168.33.11:8080 (user:admin, pass:admin)，選擇HDFS→Service Actions→Restart All。等待一兩分鐘後，服務重啟完成，```adsctw```就可以亂搞hdfs了 XD
