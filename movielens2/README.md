@@ -116,6 +116,9 @@ LOCATION '/user/hive/warehouse/movielens/movies_omni';
 ```
 
 ## ETL 資料轉換
+- 使用```split(string str, string pat)```將```movies.genres```欄位裡的字串轉成陣列
+- 使用```explode()```，根據一列欄位裡的array或map的值，展開成多列
+- 用法請參考[Hive Operators and User-Defined Functions (UDFs)](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF)
 ```
 INSERT INTO MOVIES_OMNI
 SELECT movieid, title, genres_omni
