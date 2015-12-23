@@ -73,7 +73,14 @@ NETMASK="255.255.255.0"
 # service network restart
 ```
 
-好吧，如果覺得這樣設定有難度，使用以下方式也可以
+好吧，如果覺得這樣設定有難度，使用以下方式也可以。但這樣設定只是暫時的，下次重新開機設定會消失，需要重新設定一次。
 ```
 # ifconfig eth1 192.168.33.11
+```
+
+設定完成就可以透過[putty](http://www.chiark.greenend.org.uk/~sgtatham/putty/)或[iTerm](https://www.iterm2.com/)連接進入Hortonworks
+```
+$ ssh adsctw@192.168.33.11
+adsctw@192.168.33.11's password:
+$
 ```
