@@ -14,11 +14,13 @@ ___
 長久以來使用C, Java, PHP, JS，太習慣命令式編程方式(Imperative Programming)，什麼流程都要控制、所有步驟都要自己操心，剛接觸Scala會很不習慣，因為這種語言不需要告訴程式該怎麼做，而是透過宣告的方式(Declarative Programming)告訴它你想要什麼結果。
 
 宣告一個列整數
-```
+
+```scala
 val numbers = List(1,2,3,4)
 ```
 
 如果想要印出這個串列的內容，過去的編程方式(Imperative Programming)會是這麼寫 - 使用迴圈，逐一列印串列裡的值
+
 ```scala
 for (number <- numbers) {
     println(number)
@@ -26,7 +28,7 @@ for (number <- numbers) {
 ```
 
 使用```println()```列印並換行，執行結果如下
-```
+```scala
 1
 2
 3
@@ -34,6 +36,7 @@ for (number <- numbers) {
 ```
 
 換成宣告方式(Declarative Programming)程式看起來會是像這樣 - 迴圈內的控制流程不見了，取而代之的是呼叫```foreach()```並傳入一個函式```println```
+
 ```scala
 numbers.foreach(println)
 ```
@@ -43,7 +46,8 @@ numbers.foreach(println)
 剛剛提到函式(Function)，現在來看看如何定義。
 
 Scala 定義函式的方法有兩種，第一種是透過```def```宣告
-```
+
+```scala
 def square(n: Int): Int = {
     return n*n
 }
@@ -57,13 +61,15 @@ def square(n: Int): Int = {
 - ```{}``` 定義函式的內容
 
 呼叫方式如下
+
 ```scala
-scala> square(3)
-res2: Int = 9
+scala> val num = square(3)
+num: Int = 9
 ```
 
-第二種定義方式，把函式當成變數。quot良葛格的一句話：「在Scala中，函式是一級（First-class）公民，也就是說，在Scala中，函式是物件。」
-```
+第二種定義方式，把函式當成變數。引述良葛格的一句話：「在Scala中，函式是一級（First-class）公民，也就是說，在Scala中，函式是物件。」
+
+```scala
 val square: (Int)=>Int = {
     (n:Int) =>
     n*n
@@ -76,8 +82,8 @@ val square: (Int)=>Int = {
 - ```square``` 是函式名稱
 - ```:``` 左邊是變數名稱；右邊宣告回傳值
 - ```(Int)=>Int``` 回傳值的型態(type)，在這個例子中是一個函式 (輸入```Int```，輸出```Int```)
-- ```=``` 左邊放變數的值，在這例子中是放函式的內容
-- ```{}``` 定義匿名函式(anonymous function)的內容，為什麼說是匿名函式呢？因為就算沒有```=```左半邊的東西，右半邊的```{}```還是可以獨立存在，只是你宣告的時候如果沒有傳給一個變數來儲存，因為匿名所以將來也沒辦法呼叫。
+- ```=``` 左邊放變數的名稱，右邊擺放函式的內容
+- ```{}``` 定義匿名函式(anonymous function)的內容，為什麼說是匿名函式呢？因為就算沒有```=```左半邊的東西，右半邊的```{}```還是可以獨立存在，只是你宣告的時候如果沒有傳給一個變數來儲存，將來沒辦法呼叫 (因為這樣才叫做**匿名**吧)。
 
 再來說明```{}```裡面的東東
 - ``` (n:Int)``` 接收一個變數```n```，型態為```Int```
@@ -85,12 +91,14 @@ val square: (Int)=>Int = {
 - ```n*n``` 函式內容，把```n```執行平方運算，在Scala匿名函式中，最後一行的值預設會回傳，故省略```return```
 
 呼叫方式跟之前一樣
+
 ```scala
-scala> square(3)
-res4: Int = 9
+scala> val num = square(3)
+num: Int = 9
 ```
 
-如果匿名函式的內容只有短短一行，通常會寫成一行。整理一遍剛剛的寫法
+如果匿名函式的內容只有短短一行，通常整個式子會寫成下面這樣，簡單扼要。
+
 ```scala
 scala> val square: (Int)=>Int = {(n:Int) => n*n}
 square: (Int) => Int = <function>
@@ -123,6 +131,7 @@ squares: List[Int] = List(1, 4, 9, 16)
 ```
 
 另外再提一個scala的慣例，如果函式的參數只有一個且為匿名函式，呼叫函式用來傳遞參數的```()```可以省略，例如
+
 ```scala
 scala> numbers.foreach {n => println(n)}
 1
@@ -132,18 +141,21 @@ scala> numbers.foreach {n => println(n)}
 ```
 
 所以剛剛的呼叫方式拿掉```()```變成
+
 ```scala
 scala> val squares = numbers.map{(n:Int) => n*n}
 squares: List[Int] = List(1, 4, 9, 16)
 ```
 
 再來，因為```map()```要對```numbers```作用，匿名函式的輸入參數型態也可被準確推測，去掉```()```與```Int```再簡化就變成
+
 ```scala
 scala> val squares = numbers.map{n => n*n}
 squares: List[Int] = List(1, 4, 9, 16)
 ```
 
 最後，如果匿名函式的內容不只一行，通常會表示成這樣
+
 ```scala
 val squares = numbers.map{n =>
     /**
