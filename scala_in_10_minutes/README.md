@@ -25,7 +25,7 @@ for (number <- numbers) {
 }
 ```
 
-使用```println()```列印加上new line，執行結果
+使用```println()```列印並換行，執行結果如下
 ```
 1
 2
@@ -90,20 +90,67 @@ scala> square(3)
 res4: Int = 9
 ```
 
+如果匿名函式的內容只有短短一行，通常會寫成一行。整理一遍剛剛的寫法
+```scala
+scala> val square: (Int)=>Int = {(n:Int) => n*n}
+square: (Int) => Int = <function>
+```
+
+事實上，```square``` 型態可以省略，因為scala可以從```{(n:Int) => n*n}```推測出
+- 這個變數的型態是函式
+- 函式輸入參數為```(n:Int)```
+- 函式輸入參數為```Int``` (n是整數，運算結果也會是整數)
+
+```scala
+scala> val square = {(n:Int) => n*n}
+square: (Int) => Int = <function>
+```
+
 ## Functional Programming ##
 
 呼～難的部分解決了，接下來解釋如何把函式當成變數傳給另一個函式的方法(Passing a function literal as a function argument)，有點繞口不是嗎 ;)
 
 來看一個很常見的```map()```函式，順便觀察執行結果
-```
+```scala
 scala> val squares = numbers.map(square)
 squares: List[Int] = List(1, 4, 9, 16)
 ```
 
 把 ```square``` 換成我們剛剛寫的匿名函式，效果是一樣的
-```
+```scala
 scala> val squares = numbers.map({(n:Int) => n*n})
 squares: List[Int] = List(1, 4, 9, 16)
 ```
-___
-未完待續
+
+另外再提一個scala的慣例，如果函式的參數只有一個且為匿名函式，呼叫函式用來傳遞參數的```()```可以省略，例如
+```scala
+scala> numbers.foreach {n => println(n)}
+1
+2
+3
+4
+```
+
+所以剛剛的呼叫方式拿掉```()```變成
+```scala
+scala> val squares = numbers.map{(n:Int) => n*n}
+squares: List[Int] = List(1, 4, 9, 16)
+```
+
+再來，因為```map()```要對```numbers```作用，匿名函式的輸入參數型態也可被準確推測，去掉```()```與```Int```再簡化就變成
+```scala
+scala> val squares = numbers.map{n => n*n}
+squares: List[Int] = List(1, 4, 9, 16)
+```
+
+最後，如果匿名函式的內容不只一行，通常會表示成這樣
+```scala
+val squares = numbers.map{n =>
+    /**
+     * more than one line
+     */
+    n*n
+}
+```
+
+這樣的表示法大概是使用scala時最常見到的了。看懂這個，再去看scala的範例程式就不會霧煞煞囉 :P
