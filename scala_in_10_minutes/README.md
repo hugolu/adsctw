@@ -21,13 +21,21 @@ val numbers = List(1,2,3,4)
 如果想要印出這個串列的內容，過去的編程方式(Imperative Programming)會是這麼寫 - 使用迴圈，逐一列印串列裡的值
 ```scala
 for (number <- numbers) {
-    print(number)
+    println(number)
 }
 ```
 
-換成宣告方式(Declarative Programming)程式看起來會是像這樣 - 迴圈內的控制流程不見了，取而代之的是呼叫```foreach()```並傳入一個函式```print```
+使用```println()```列印加上new line，執行結果
+```
+1
+2
+3
+4
+```
+
+換成宣告方式(Declarative Programming)程式看起來會是像這樣 - 迴圈內的控制流程不見了，取而代之的是呼叫```foreach()```並傳入一個函式```println```
 ```scala
-numbers.foreach(print)
+numbers.foreach(println)
 ```
 
 ## Function ##
@@ -80,6 +88,22 @@ val square: (Int)=>Int = {
 ```scala
 scala> square(3)
 res4: Int = 9
+```
+
+## Functional Programming ##
+
+呼～難的部分解決了，接下來解釋如何把函式當成變數傳給另一個函式的方法(Passing a function literal as a function argument)，有點繞口不是嗎 ;)
+
+來看一個很常見的```map()```函式，順便觀察執行結果
+```
+scala> val squares = numbers.map(square)
+squares: List[Int] = List(1, 4, 9, 16)
+```
+
+把 ```square``` 換成我們剛剛寫的匿名函式，效果是一樣的
+```
+scala> val squares = numbers.map({(n:Int) => n*n})
+squares: List[Int] = List(1, 4, 9, 16)
 ```
 ___
 未完待續
