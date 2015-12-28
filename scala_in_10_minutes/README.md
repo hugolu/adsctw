@@ -166,3 +166,42 @@ val squares = numbers.map{n =>
 ```
 
 這樣的表示法大概是使用scala時最常見到的了。看懂這個，再去看scala的範例程式就不會霧煞煞囉 :P
+
+___
+## 編譯scala ##
+
+參考連結
+ - [scalac 與 fsc](http://openhome.cc/Gossip/Scala/ScalacFscCommand.html)
+
+scala code 除了可以透過 interactive shell 執行，還可以使用 scalac 將程式碼編譯成可以在 JVM 環境執行的.class。
+
+來看一個簡單的範例 (HelloWorld.scala)
+```scala
+object HelloWorld {
+    def main(args: Array[String]) {
+        val name = if (args.size > 0) args(0) else "Scala"
+        println("Hello World! " + name)
+    }
+}
+```
+ - 承襲Java慣例，HelloWorld object 與檔名一樣
+ - 程式執行可從命令參數得到一個名字
+ - scala 不支援三元運算(```?:```)，但因為```if else```有回傳值，可充當三元運算子
+ 
+編譯與執行
+```shell
+$ scalac HelloWorld.scala
+$ scala HelloWorld
+Hello World! Scala
+$ scala HelloWorld Adsctw
+Hello World! Adsctw
+```
+
+另外在我的環境還要額外宣告```CLASSPATH```，才能讓scala找到HelloWorld來執
+```
+$ scala HelloWorld
+no such file: HelloWorld
+$ export CLASSPATH=$CLASSPATH:.
+$ scala HelloWorld
+Hello World! Scala
+```
