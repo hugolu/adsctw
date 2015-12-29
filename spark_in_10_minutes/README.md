@@ -38,3 +38,37 @@ Welcome to
 
 Using Scala version 2.10.4 (OpenJDK 64-Bit Server VM, Java 1.7.0_91)
 ```
+___
+## 快速開始 ##
+
+以下練習摘錄自[Spark Quick Start](https://spark.apache.org/docs/latest/quick-start.html)，使用```spark-shell```操作。
+
+進入spark shell會看到```scala> ```提示符號，敲入兩行動作，得到一些錯誤訊息
+```
+scala> val textFile = sc.textFile("README.md")
+scala> textFile.count()
+org.apache.hadoop.mapred.InvalidInputException: Input path does not exist: hdfs://localhost:9000/user/hadoop/README.md
+...
+```
+
+想當然，```README.md```還沒放上去，發生錯誤是應該的，順便也窺知spark-shell預設檔案的路徑在```hdfs://localhost:9000/user/hadoop/README.md```，使用另一個console上傳檔案
+```shell
+$ hadoop fs -put README.md /user/hadoop
+```
+
+檔案上傳後再執行剛剛載入```README.md```的動作。
+```
+scala> val textFile = sc.textFile("README.md")
+```
+
+計算檔案行數
+```
+scala> val num = textFile.count() // Number of items in this RDD
+num: Long = 254
+```
+
+找出檔案第一行
+```
+scala> val str = textFile.first() // First item in this RDD
+str: String = # 銷售組合分析
+```
