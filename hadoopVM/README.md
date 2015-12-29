@@ -11,6 +11,9 @@
 - 記憶體 2G (要跑Spark)
 - 硬碟空間 10G (以我的case，10G就夠用)
 
+## 參考資料
+- [Running Hadoop on Ubuntu Linux (Single-Node Cluster)](http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/)
+
 ## 安裝、設定、連接 VM
 
 以下動作在我的 MacBookPro 使用 iTerm 操作。
@@ -46,5 +49,26 @@ $ vagrant up --provider virtualbox
 $ vagrant ssh
 ```
 
+## 安裝 Java SDK
+
+先更新apt source list
+```shell
+$ sudo apt-get update
+$ sudo apt-get install python-software-properties
+$ sudo add-apt-repository ppa:ferramroberto/java
+```
+
+安裝ubunbu自帶的openjdk-7-jdk
+```shell
+$ sudo apt-get install -y openjdk-7-jdk
+```
+
+檢查安裝的版本
+```shell
+$ java -version
+java version "1.7.0_91"
+OpenJDK Runtime Environment (IcedTea 2.6.3) (7u91-2.6.3-0ubuntu0.14.04.1)
+OpenJDK 64-Bit Server VM (build 24.91-b01, mixed mode)
+```
 ___
 <<未完待續>>
