@@ -63,26 +63,30 @@ $ hadoop fs -put sample.txt /user/hadoop
 檔案上傳後再執行剛剛載入```sample.txt```的動作。
 ```scala
 scala> val textFile = sc.textFile("sample.txt")
+textFile: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[1] at textFile at <console>:21
 ```
+ - ```textFile``` 代表 spark 物件的抽象集合，叫做Resilient Distributed Dataset (RDD)。
+ - RDD 可以從 Hadoop HDFS 讀取，也可以由其他 RDD 轉換過來。
+ - RDD 執行 transformation (不會產生計算)，回傳新的 RDD 的指標。
+ - RDD 執行 action (會產生計算)，回傳值。
 
-計算檔案行數
+執行 action：計算檔案行數、找出檔案第一行
 ```scala
 scala> val num = textFile.count() // Number of items in this RDD
+15/12/29 02:56:06 INFO mapred.FileInputFormat: Total input paths to process : 1
+...
 num: Long = 3
-```
 
-找出檔案第一行
-```scala
 scala> val str = textFile.first() // First item in this RDD
+15/12/29 02:58:22 INFO spark.SparkContext: Starting job: first at <console>:23
+...
 str: String = Deer Bear River
 ```
 
-找出含有```Car```的行數
+執行 transformation：找出含有```Car```的行數
 ```scala
 scala> val linesWithCar = textFile.filter(line => line.contains("Car"))
-scala> linesWithCar.foreach(println)
-Car Car River
-Deer Car Bear
+linesWithCar: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[2] at filter at <console>:23
 ```
 
 算出含有```Car```的行數
@@ -90,6 +94,8 @@ Deer Car Bear
 scala> val num = textFile.filter(line => line.contains("Car")).count()
 num: Long = 2
 ```
+ - 呼叫```filter()``` 產生新的RDD
+ - 對新的 RDD 執行 ```count()``` 引發運算
 
 計算每個字串出現的次數
 ```scala
