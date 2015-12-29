@@ -11,7 +11,7 @@ Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/hadoop/fs/
 ```
 
 請執行以下動作
-```
+```shell
 $ export SPARK_HOME=/usr/local/spark
 $ export PATH=$PATH:$SPARK_HOME/bin
 $ export CLASSPATH=$CLASSPATH:$(hadoop classpath)
@@ -41,34 +41,48 @@ Using Scala version 2.10.4 (OpenJDK 64-Bit Server VM, Java 1.7.0_91)
 ___
 ## 快速開始 ##
 
-以下練習摘錄自[Spark Quick Start](https://spark.apache.org/docs/latest/quick-start.html)，使用```spark-shell```操作。
+以下練習參考[Spark Quick Start](https://spark.apache.org/docs/latest/quick-start.html)，使用```spark-shell```操作文件```sample.txt```。
 
 進入spark shell會看到```scala> ```提示符號，敲入兩行動作，得到一些錯誤訊息
-```
-scala> val textFile = sc.textFile("README.md")
+```scala
+scala> val textFile = sc.textFile("sample.txt")
 scala> textFile.count()
-org.apache.hadoop.mapred.InvalidInputException: Input path does not exist: hdfs://localhost:9000/user/hadoop/README.md
+org.apache.hadoop.mapred.InvalidInputException: Input path does not exist: hdfs://localhost:9000/user/hadoop/sample.txt
 ...
 ```
 
-想當然，```README.md```還沒放上去，發生錯誤是應該的，順便也窺知spark-shell預設檔案的路徑在```hdfs://localhost:9000/user/hadoop/README.md```，使用另一個console上傳檔案
+想當然，```sample.txt```還沒放上去，發生錯誤是應該的，順便也窺知spark-shell預設檔案的路徑在```hdfs://localhost:9000/user/hadoop/sample.txt```，使用另一個console上傳檔案
 ```shell
-$ hadoop fs -put README.md /user/hadoop
+$ hadoop fs -put sample.txt /user/hadoop
 ```
 
-檔案上傳後再執行剛剛載入```README.md```的動作。
-```
-scala> val textFile = sc.textFile("README.md")
+檔案上傳後再執行剛剛載入```sample.txt```的動作。
+```scala
+scala> val textFile = sc.textFile("sample.txt")
 ```
 
 計算檔案行數
-```
+```scala
 scala> val num = textFile.count() // Number of items in this RDD
-num: Long = 254
+num: Long = 3
 ```
 
 找出檔案第一行
-```
+```scala
 scala> val str = textFile.first() // First item in this RDD
-str: String = # 銷售組合分析
+str: String = Deer Bear River
+```
+
+找出含有```Car```的行數
+```scala
+scala> val linesWithCar = textFile.filter(line => line.contains("Car"))
+scala> linesWithCar.foreach(println)
+Car Car River
+Deer Car Bear
+```
+
+算出含有```Car```的行數
+```scala
+scala> val num = textFile.filter(line => line.contains("Car")).count()
+num: Long = 2
 ```
