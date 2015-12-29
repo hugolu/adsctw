@@ -97,5 +97,10 @@ $ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 $ ssh localhost
 ```
 
+## 安裝 Hadoop
+到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hadoop/core)下載最新的hadoop package
+```shell
+$ wget http://ftp.tc.edu.tw/pub/Apache/hadoop/core/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+```
 ___
 <<未完待續>>
