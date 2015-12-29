@@ -70,5 +70,32 @@ java version "1.7.0_91"
 OpenJDK Runtime Environment (IcedTea 2.6.3) (7u91-2.6.3-0ubuntu0.14.04.1)
 OpenJDK 64-Bit Server VM (build 24.91-b01, mixed mode)
 ```
+
+## 新增Hadoop系統使用者
+
+```shell
+$ sudo addgroup hadoop
+$ sudo adduser --ingroup hadoop adsctw
+```
+
+- 新增```hadoop```群組
+- 新增```adsctw```使用者
+
+## 設定ssh連線
+
+Hadoop使用ssh存取遠端，即使是單機也需要連接```localhost```。
+
+先切換到```adsctw```使用者，產生ssh public key，把來自localhost的連線變成不需密碼登入
+```shell
+$ su - adsctw
+$ ssh-keygen -t rsa -P ""
+$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+測試一下，耶！登入不用密碼
+```
+$ ssh localhost
+```
+
 ___
 <<未完待續>>
