@@ -100,7 +100,16 @@ $ ssh localhost
 ## 安裝 Hadoop
 到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hadoop/core)下載最新的hadoop package
 ```shell
+$ cd /tmp
 $ wget http://ftp.tc.edu.tw/pub/Apache/hadoop/core/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+```
+
+安裝到```/usr/local```
+```shell
+$ cd /usr/local
+$ sudo tar xzf /tmp/hadoop-2.7.1.tar.gz
+$ sudo chown -R adsctw:hadoop hadoop-2.7.1
+$ sudo ln -sf hadoop-2.7.1 hadoop
 ```
 ___
 <<未完待續>>
