@@ -41,7 +41,11 @@ Using Scala version 2.10.4 (OpenJDK 64-Bit Server VM, Java 1.7.0_91)
 ___
 ## 快速開始 ##
 
-以下練習參考[Spark Quick Start](https://spark.apache.org/docs/latest/quick-start.html)，使用```spark-shell```操作文件```sample.txt```。
+以下練習參考，使用```spark-shell```操作文件```sample.txt```。
+
+參考資料
+ - [Spark Quick Start](https://spark.apache.org/docs/latest/quick-start.html)
+ - [Spark Examples](http://spark.apache.org/examples.html)
 
 進入spark shell會看到```scala> ```提示符號，敲入兩行動作，得到一些錯誤訊息
 ```scala
@@ -85,4 +89,29 @@ Deer Car Bear
 ```scala
 scala> val num = textFile.filter(line => line.contains("Car")).count()
 num: Long = 2
+```
+
+計算每個字串出現的次數
+```scala
+scala> val counts = textFile.flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey(_ + _)
+scala> counts.foreach(println)
+(Deer,2)
+(Bear,2)
+(Car,3)
+(River,2)
+```
+
+將結果輸出到檔案
+```scala
+scala> counts.saveAsTextFile("wordcount")
+```
+
+將檔案拉回本機，然後秀出結果
+```shell
+$ hadoop fs -get /user/hadoop/wordcount
+$ cat wordcount/part-00000
+(Deer,2)
+(Bear,2)
+(Car,3)
+(River,2)
 ```
