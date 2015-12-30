@@ -44,10 +44,25 @@ $ vi Vagrantfile
   end
 ```
 
-第一次啟動，啟動後使用ssh連線登入
+啟動VM，如果你有安裝多個虛擬機軟體，請加上```--provider virtualbox```選項指定virtualbox
 ```shell
-$ vagrant up --provider virtualbox
+$ vagrant up
+```
+
+啟動後使用ssh連線登入，登入者名稱為```vagrant```
+```shell
 $ vagrant ssh
+vagrant@vagrant-ubuntu-trusty-64:~$
+```
+
+## APT
+
+安裝套件有兩種方式，一個是下載source自行編譯、另一個是使用套件管理工具，除非你想修改(hack)套件內容不然一般會選擇使用管理套件工具。為了讓自己生活愉快，我在這份說明文件中使用[APT](https://en.wikipedia.org/wiki/Advanced_Packaging_Tool)安裝工具與服務程式。
+
+更新apt source list，並安裝待需要用到的工具。
+```shell
+sudo apt-get update
+sudo apt-get install -y git unzip tree
 ```
 
 ## 安裝 Java SDK
