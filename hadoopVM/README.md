@@ -2,7 +2,15 @@
 
 ## 動機
 
-之前從 Hortonworks 下載 hortonworks sandbox VM 影像檔，試玩發現裡面執行太多服務，不但佔硬碟也非常消耗CPU與記憶體，決定把之前安裝 ubuntu/trusty64 虛擬機、架設Hadoop相關服務的過程寫成筆記。
+之前從 Hortonworks 下載 [hortonworks sandbox](http://hortonworks.com/products/hortonworks-sandbox/#install) VM 影像檔，試玩發現裡面執行太多服務，不但肥大也很耗資源，決定把之前安裝 ubuntu/trusty64 虛擬機、架設Hadoop相關服務的過程寫成筆記。
+
+這篇文章沒有包山包海的企圖，也沒有想要真正架設一個Hadoop Cluster，只想單存弄一個簡易的單機偽分佈式系統(Pseudo-Distributed Mode)，可以讓自己在上面複習課堂上除了Azure Machine Learning、HDinsight之外的課程。要建置這樣的環境，需要的服務包含：
+- Hadoop/HDFS
+- Hive
+- MySQL
+- Sqoop
+- Scala
+- Spark
 
 ## 需求
 
@@ -11,12 +19,9 @@
 - 記憶體 2G (要跑Spark)
 - 硬碟空間 10G (以我的case，10G就夠用)
 
-## 參考資料
-- [Running Hadoop on Ubuntu Linux (Single-Node Cluster)](http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/)
-
 ## 安裝、設定、連接 VM
 
-以下動作在我的 MacBookPro 使用 iTerm 操作。
+以下動作在我的 MacBookPro 使用 iTerm 操作，只列出相關指令，不顯示安裝過程終端機輸出的訊息。
 
 創建adsctw目錄，把VM安裝在此
 ```shell
@@ -29,7 +34,7 @@ $ cd adsctw
 $ vagrant init ubuntu/trusty64
 ```
 
-啟動前修改```Vagrantfile```裡面記憶體的配置
+啟動前修改VM記憶體配置
 ```shell
 $ vi Vagrantfile
 ```
@@ -39,13 +44,9 @@ $ vi Vagrantfile
   end
 ```
 
-第一次啟動
+第一次啟動，啟動後使用ssh連線登入
 ```shell
 $ vagrant up --provider virtualbox
-```
-
-啟動後，使用ssh連線登入
-```shell
 $ vagrant ssh
 ```
 
@@ -98,6 +99,9 @@ $ ssh localhost
 ```
 
 ## 安裝 Hadoop
+參考資料
+- [Running Hadoop on Ubuntu Linux (Single-Node Cluster)](http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/)
+
 到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hadoop/core)下載最新的hadoop package
 ```shell
 $ cd /tmp
