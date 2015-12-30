@@ -98,10 +98,12 @@ $ exit
 $ sudo apt-get install -y openjdk-7-jdk
 ```
 
-設定環境變數
+設定環境變數，修改```~/.bashrc``` (ps.以下有關文件修改皆使用vim操作)
 ```shell
 $ vim ~/.bashrc
 ```
+
+加入以下內容
 ```
 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 ```
@@ -111,22 +113,73 @@ export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 $ java -version
 ```
 
-## 安裝 Hadoop
+## Hadoop/HDFS
 參考資料
+- [Hadoop安装配置简略教程](http://www.powerxing.com/install-hadoop-simplify/)
 - [Running Hadoop on Ubuntu Linux (Single-Node Cluster)](http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/)
+- [Hadoop: Setting up a Single Node Cluster](https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html)
 
-到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hadoop/core)下載最新的hadoop package
+到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hadoop/core)下載最新的hadoop package，解壓縮後搬移到```/usr/local```目錄之下。
 ```shell
-$ cd /tmp
 $ wget http://ftp.tc.edu.tw/pub/Apache/hadoop/core/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+$ tar zxf hadoop-2.7.1.tar.gz
+$ sudo mv hadoop-2.7.1 /usr/local/hadoop
 ```
 
-安裝到```/usr/local```
+設定環境變數，修改```~/.bashrc```加入以下內容
+```
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export CLASSPATH=$CLASSPATH:$(hadoop classpath)
+```
+
+設定 hadoop core-site，修改```/usr/local/hadoop/etc/hadoop/core-site.xml```內容
+```
+<configuration>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>file:/usr/local/hadoop/tmp</value>
+        <description>Abase for other temporary directories.</description>
+    </property>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+```
+
+設定 hadoop hdfs-site，修改```/usr/local/hadoop/etc/hadoop/hdfs-site.xml```內容
+```
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:/usr/local/hadoop/tmp/dfs/name</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:/usr/local/hadoop/tmp/dfs/data</value>
+    </property>
+</configuration>
+```
+
+設定hadoop環境變數，修改```/usr/local/hadoop/etc/hadoop/hadoop-env.sh```內容
+```
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+```
+
+格式化HDFS檔案系統
 ```shell
-$ cd /usr/local
-$ sudo tar xzf /tmp/hadoop-2.7.1.tar.gz
-$ sudo chown -R adsctw:hadoop hadoop-2.7.1
-$ sudo ln -sf hadoop-2.7.1 hadoop
+$ hdfs namenode -format
+```
+
+啟動HDFS服務，並檢視那些服務被啟動
+```shell
+$ start-dfs.sh
+$ jps
 ```
 ___
 <<未完待續>>
