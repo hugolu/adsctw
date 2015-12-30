@@ -61,8 +61,28 @@ vagrant@vagrant-ubuntu-trusty-64:~$
 
 更新apt source list，並安裝待需要用到的工具。
 ```shell
-sudo apt-get update
-sudo apt-get install -y git unzip tree
+$ sudo apt-get update
+$ sudo apt-get install -y git unzip tree
+```
+
+## User
+
+創建有執行Hadoop/HDFS權限的使用者```hadoop```，把它加入```sudo```群組，這樣就能使用```root```權限執行指令。
+```shell
+$ sudo useradd -m hadoop -s /bin/bash
+$ sudo passwd hadoop
+$ sudo adduser hadoop sudo
+```
+
+OK！接下來所有動作換成```hadoop```身份來操作。
+```shell
+$ sudo su - hadoop
+```
+
+認證自己的ssh public key，以便將來可以不需使用密碼登入。
+```shell
+$ ssh-keygen -t rsa
+$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ```
 
 ## 安裝 Java SDK
