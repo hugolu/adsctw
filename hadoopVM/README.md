@@ -49,7 +49,7 @@ $ vi Vagrantfile
 $ vagrant up
 ```
 
-啟動後使用ssh連線登入，登入者名稱為```vagrant```
+啟動後使用ssh連線登入，登入者名稱為 **vagrant**
 ```shell
 $ vagrant ssh
 vagrant@vagrant-ubuntu-trusty-64:~$
@@ -67,19 +67,19 @@ $ sudo apt-get install -y git unzip tree
 
 ## User
 
-創建有執行Hadoop/HDFS權限的使用者```hadoop```，把它加入```sudo```群組，這樣就能使用```root```權限執行指令。
+創建有執行Hadoop/HDFS權限的使用者**hadoop**，把它加入**sudo**群組，這樣就能使用**root**權限執行指令。
 ```shell
 $ sudo useradd -m hadoop -s /bin/bash
 $ sudo passwd hadoop
 $ sudo adduser hadoop sudo
 ```
 
-OK！接下來所有動作換成```hadoop```身份來操作。
+OK！接下來所有動作換成**hadoop**身份來操作。
 ```shell
 $ sudo su - hadoop
 ```
 
-Hadoop使用ssh存取遠端，即使是單機也需要連接```localhost```。接下來，認證自己的ssh public key，以便將來可以不需使用密碼登入。
+Hadoop使用ssh存取遠端，即使是單機也需要連接localhost。接下來，認證自己的ssh public key，以便將來可以不需使用密碼登入。
 ```shell
 $ ssh-keygen -t rsa
 $ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
