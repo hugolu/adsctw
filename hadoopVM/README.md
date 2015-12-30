@@ -181,5 +181,36 @@ $ hdfs namenode -format
 $ start-dfs.sh
 $ jps
 ```
+
+測試 HDFS/MapReduce 功能是否正常
+```shell
+$ hadoop fs -mkdir -p /user/hadoop
+$ hadoop fs -mkdir input
+$ hadoop fs -put /usr/local/hadoop/etc/hadoop/*.xml input
+$ hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+'
+$ hadoop fs -cat output/*
+```
+
+## Hive
+參考資料
+- [Apache Hive Getting Started](https://cwiki.apache.org/confluence/display/Hive/GettingStarted)
+
+到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hive/)下載最新的hive package，解壓縮後搬移到```/usr/local```目錄之下。
+```shell
+$ wget http://ftp.tc.edu.tw/pub/Apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
+$ tar zxf apache-hive-1.2.1-bin.tar.gz -C /usr/local/
+$ sudo mv apache-hive-1.2.1-bin /usr/local/hive
+```
+
+設定環境變數，修改```~/.bashrc```加入以下內容
+```
+export HIVE_HOME=/usr/local/hive
+export PATH=$PATH:$HIVE_HOME/bin
+```
+
+測試 Hive 功能是否正常
+```shell
+$ hive -e "select 1+1"
+```
 ___
 <<未完待續>>
