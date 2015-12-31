@@ -1,10 +1,11 @@
 #!/bin/bash
 
-mkdir adsctw
-cd adsctw
-
+## setup vm
 vagrant init ubuntu/trusty64
-cp -f ../Vagrantfile .
+cp -f my.Vagrantfile Vagrantfile
 
+## power up VM
 vagrant up
+
+## login VM
 vagrant ssh
