@@ -200,7 +200,7 @@ $ hadoop fs -cat output/*
 到[Apache Download Mirrors](http://www.apache.org/dyn/closer.cgi/hive/)下載最新的hive package，解壓縮後搬移到```/usr/local```目錄之下。
 ```shell
 $ wget http://ftp.tc.edu.tw/pub/Apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
-$ tar zxf apache-hive-1.2.1-bin.tar.gz -C /usr/local/
+$ tar zxf apache-hive-1.2.1-bin.tar.gz
 $ sudo mv apache-hive-1.2.1-bin /usr/local/hive
 ```
 
