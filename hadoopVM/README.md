@@ -65,31 +65,6 @@ $ sudo apt-get update
 $ sudo apt-get install -y git unzip tree
 ```
 
-## MySQL
-
-Hadoop資料可能來自傳統結構化資料庫，第一天有課程教導如何把紀錄從MySQL遷移到Hive上。So，安裝Hadoop之前，先把MySQL安裝好。
-
-安裝Ubuntu自帶的mysql-server，使用下面指令會一併安裝mysql-server、mysql-client、mysql-common。安裝過程會詢問**root**密碼，隨便打一個方便記憶的字串即可。
-```shell
-$ sudo apt-get install -y mysql-server
-```
-
-創建一個操作資料庫的使用者，課程預設帳號/密碼為**hive**/**hive**。先使用**root**身份登入登入mysql shell，看到提示符號由```$```變成```mysql>```，開始新增使用者。
-```shell
-$ mysql -uroot -p
-```
-```sql
-mysql> INSERT INTO mysql.user(host,user,password) VALUES ('%','hive',password('hive'));
-mysql> GRANT ALL ON *.* TO 'hive'@localhost IDENTIFIED BY 'hive' WITH GRANT OPTION;
-mysql> FLUSH PRIVILEGES;
-mysql> QUIT;
-```
-
-測試安裝是否成功
-```shell
-$ mysql -uhive -phive -e "select 1+1"
-```
-
 ## User
 
 創建有執行Hadoop/HDFS權限的使用者**hadoop**，把它加入**sudo**群組，這樣就能使用**root**權限執行指令。
@@ -238,6 +213,31 @@ export PATH=$PATH:$HIVE_HOME/bin
 測試 Hive 功能是否正常
 ```shell
 $ hive -e "select 1+1"
+```
+
+## MySQL
+
+Hadoop資料可能來自傳統結構化資料庫，第一天有課程教導如何把紀錄從MySQL遷移到Hive上。So，順便安裝MySQL。
+
+安裝Ubuntu自帶的mysql-server，使用下面指令會一併安裝mysql-server、mysql-client、mysql-common。安裝過程會詢問**root**密碼，隨便打一個方便記憶的字串即可。
+```shell
+$ sudo apt-get install -y mysql-server
+```
+
+創建一個操作資料庫的使用者，課程預設帳號/密碼為**hive**/**hive**。先使用**root**身份登入登入mysql shell，看到提示符號由```$```變成```mysql>```，開始新增使用者。
+```shell
+$ mysql -uroot -p
+```
+```sql
+mysql> INSERT INTO mysql.user(host,user,password) VALUES ('%','hive',password('hive'));
+mysql> GRANT ALL ON *.* TO 'hive'@localhost IDENTIFIED BY 'hive' WITH GRANT OPTION;
+mysql> FLUSH PRIVILEGES;
+mysql> QUIT;
+```
+
+測試安裝是否成功
+```shell
+$ mysql -uhive -phive -e "select 1+1"
 ```
 
 ## Sqoop
