@@ -25,7 +25,7 @@
 - ```$ setup_vm.sh```，設定虛擬機，然後登入虛擬機。
 - ```$ /vagrant/setup_env.sh```，準備開發環境，創建**hadoop**使用者，切換使用者。
 - ```$ /vagrant/install_pkg.sh```，安裝套件。
-- ```$ exit; sudo su - hadoop```，重新登入。
+- ```$ exit``` ```$ sudo su - hadoop```，重新登入。
 - ```$ /vagrant/install_chk.sh```，檢查安裝是否成功。
 
 ___
