@@ -139,6 +139,7 @@ $ java -version
 ```
 
 ## Hadoop/HDFS
+
 參考資料
 - [Hadoop安装配置简略教程](http://www.powerxing.com/install-hadoop-simplify/)
 - [Running Hadoop on Ubuntu Linux (Single-Node Cluster)](http://www.michael-noll.com/tutorials/running-hadoop-on-ubuntu-linux-single-node-cluster/)
@@ -217,6 +218,7 @@ $ hadoop fs -cat output/*
 ```
 
 ## Hive
+
 參考資料
 - [Apache Hive Getting Started](https://cwiki.apache.org/confluence/display/Hive/GettingStarted)
 
@@ -239,6 +241,7 @@ $ hive -e "select 1+1"
 ```
 
 ## Sqoop
+
 參考資料
 - [Apache Sqoop 官網](http://sqoop.apache.org/)
 - [Apache Sqoop documentation - Installation](https://sqoop.apache.org/docs/1.99.1/Installation.html)
@@ -265,5 +268,27 @@ $ sudo mv mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/l
 
 由於沒有安裝HBase、HCatalog、Accumulo、Zookeeper，稍後執行sqoop的時候會跳出一堆Warning，不影響不理它
 
+## Scala
+
+參考資料
+- [Scala 官網](http://www.scala-lang.org/)
+
+到[Scala Download](http://www.scala-lang.org/download/)下載最新的scala package，解壓縮後搬移到```/usr/local```目錄之下。
+```shell
+$ wget http://downloads.typesafe.com/scala/2.11.7/scala-2.11.7.tgz
+$ tar zxf scala-2.11.7.tgz
+$ sudo mv scala-2.11.7 /usr/local/scala
+```
+
+設定環境變數，修改```~/.bashrc```加入以下內容
+```
+export SCALA_HOME=/usr/local/scala
+export PATH=$PATH:$SCALA_HOME/bin
+```
+
+測試 Hive 功能是否正常
+```shell
+$ scala -e 'println("Hello World!")'
+```
 ___
 <<未完待續>>
