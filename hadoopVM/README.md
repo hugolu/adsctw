@@ -5,7 +5,7 @@
 之前從 Hortonworks 下載 [hortonworks sandbox](http://hortonworks.com/products/hortonworks-sandbox/#install) VM 影像檔，試玩發現裡面執行太多服務，不但肥大也很耗資源，決定把之前安裝 ubuntu/trusty64 虛擬機、架設Hadoop相關服務的過程寫成筆記。
 
 這篇文章沒有包山包海的企圖，也沒有想要真正架設一個Hadoop Cluster，只想單存弄一個簡易的單機偽分佈式系統(Pseudo-Distributed Mode)，可以讓自己在上面複習課堂上除了Azure Machine Learning、HDinsight之外的課程。要建置這樣的環境，需要的服務包含：
-- Hadoop/HDFS
+- Hadoop HDFS/MapReduce
 - Hive
 - MySQL
 - Sqoop
@@ -290,5 +290,53 @@ export PATH=$PATH:$SCALA_HOME/bin
 ```shell
 $ scala -e 'println("Hello World!")'
 ```
-___
-<<未完待續>>
+
+## Spark
+
+參考資料
+- [Spark 官網](http://spark.apache.org/)
+
+到[Spark Download](http://spark.apache.org/downloads.html)下載最新的spark package，解壓縮後搬移到```/usr/local```目錄之下。
+```shell
+$ wget http://ftp.tc.edu.tw/pub/Apache/spark/spark-1.5.2/spark-1.5.2-bin-hadoop2.6.tgz
+$ tar zxf spark-1.5.2-bin-hadoop2.6.tgz
+$ sudo mv spark-1.5.2-bin-hadoop2.6 /usr/local/spark
+```
+
+設定環境變數，修改```~/.bashrc```加入以下內容
+```
+export SPARK_HOME=/usr/local/spark
+export PATH=$PATH:$SPARK_HOME/bin
+export SPARK_DIST_CLASSPATH=$SPARK_DIST_CLASSPATH:$(hadoop classpath)
+```
+
+測試 Spark 功能是否正常
+```shell
+$ run-example SparkPi
+```
+
+## 大功告成😁
+
+到此我們的虛擬機器上面架設了Hadoop、Hive、MySQL、Scala、Spark，可以好好複習課堂上學到的知識。以下總結每次開機/關機、登入/登出需要執行指令。
+
+從Host OS開啟虛擬機器，開機後ssh連線登入
+```shell
+$ cd adsctw
+$ vagrant up
+$ vagrant ssh
+```
+
+登入虛擬機後，切換使用者，並啟動hadoop服務
+```shell
+$ sudo su - hadoop
+$ start-dfs.sh
+```
+
+登出系統、關閉或暫停虛擬機器
+```shell
+$ exit
+$ vagrant halt
+$ vagrant suspend
+```
+
+That's all! Enjoy your learning :)
