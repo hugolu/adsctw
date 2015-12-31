@@ -19,14 +19,24 @@
 - 記憶體 2G (要跑Spark)
 - 硬碟空間 10G (以我的case，10G就夠用)
 
+## 懶人安裝
+
+如果沒有時間詳讀以下內容，可執行下面指令快速安裝。
+- ```$ setup_vm.sh```，設定虛擬機，然後登入虛擬機。
+- ```$ /vagrant/setup_env.sh```，準備開發環境，創建**hadoop**使用者，切換使用者。
+- ```$ /vagrant/install_pkg.sh```，安裝套件。
+- ```$ exit; sudo su - hadoop```，重新登入。
+- ```$ /vagrant/install_chk.sh```，檢查安裝是否成功。
+
+___
 ## 安裝、設定、連接 VM
 
 以下動作在我的 MacBookPro 使用 iTerm 操作，只列出相關指令，不顯示安裝過程終端機輸出的訊息。
 
-創建adsctw目錄，把VM安裝在此
+創建**hadoop_vm**目錄，把VM安裝在此
 ```shell
-$ mkdir adsctw
-$ cd adsctw
+$ mkdir hadoop_vm
+$ cd hadoop_vm
 ```
 
 下載vagrant box
@@ -321,7 +331,7 @@ $ run-example SparkPi
 
 從Host OS開啟虛擬機器，開機後ssh連線登入
 ```shell
-$ cd adsctw
+$ cd hadoop_vm
 $ vagrant up
 $ vagrant ssh
 ```
