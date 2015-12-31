@@ -237,5 +237,33 @@ export PATH=$PATH:$HIVE_HOME/bin
 ```shell
 $ hive -e "select 1+1"
 ```
+
+## Sqoop
+參考資料
+- [Apache Sqoop 官網](http://sqoop.apache.org/)
+- [Apache Sqoop documentation - Installation](https://sqoop.apache.org/docs/1.99.1/Installation.html)
+
+到[Apache Download Mirrors](http://www.apache.org/dyn/closer.lua/sqoop/)下載最新的sqoop package，解壓縮後搬移到```/usr/local```目錄之下。
+```shell
+$ wget http://ftp.tc.edu.tw/pub/Apache/sqoop/1.4.6/sqoop-1.4.6.bin__hadoop-2.0.4-alpha.tar.gz
+$ tar zxf sqoop-1.4.6.bin__hadoop-2.0.4-alpha.tar.gz
+$ sudo mv sqoop-1.4.6.bin__hadoop-2.0.4-alpha /usr/local/sqoop
+```
+
+設定環境變數，修改```~/.bashrc```加入以下內容
+```
+export SQOOP_HOME=/usr/local/sqoop
+export PATH=\$PATH:\$SQOOP_HOME/bin
+```
+
+此外還要安裝mysql connector
+```shell
+$ wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz
+$ tar zxf mysql-connector-java-5.1.38.tar.gz
+$ sudo mv mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/local/sqoop/lib/
+```
+
+由於沒有安裝HBase、HCatalog、Accumulo、Zookeeper，稍後執行sqoop的時候會跳出一堆Warning，不影響不理它
+
 ___
 <<未完待續>>
