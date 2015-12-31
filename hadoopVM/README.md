@@ -62,7 +62,7 @@ vagrant@vagrant-ubuntu-trusty-64:~$
 更新apt source list，並安裝待需要用到的工具。
 ```shell
 $ sudo apt-get update
-$ sudo apt-get install -y git unzip tree
+$ sudo apt-get -y install git unzip tree
 ```
 
 ## User
@@ -95,7 +95,7 @@ $ exit
 
 安裝Ubuntu自帶的openjdk-7-jdk
 ```shell
-$ sudo apt-get install -y openjdk-7-jdk
+$ sudo apt-get -y install openjdk-7-jdk
 ```
 
 設定環境變數，修改```~/.bashrc``` (ps.以下有關文件修改皆使用vim操作)
@@ -221,7 +221,7 @@ Hadoop資料可能來自傳統結構化資料庫，第一天有課程教導如�
 
 安裝Ubuntu自帶的mysql-server，使用下面指令會一併安裝mysql-server、mysql-client、mysql-common。安裝過程會詢問**root**密碼，隨便打一個方便記憶的字串即可。
 ```shell
-$ sudo apt-get install -y mysql-server
+$ sudo apt-get -y install mysql-server
 ```
 
 創建一個操作資料庫的使用者，課程預設帳號/密碼為**hive**/**hive**。先使用**root**身份登入登入mysql shell，看到提示符號由```$```變成```mysql>```，開始新增使用者。
