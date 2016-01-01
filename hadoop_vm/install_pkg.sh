@@ -27,8 +27,8 @@ cp -f core-site.xml /usr/local/hadoop/etc/hadoop/core-site.xml
 cp -f hdfs-site.xml /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 cp -f hadoop-env.sh /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 
-hdfs namenode -format
-start-dfs.sh
+/usr/local/hadoop/bin/hdfs namenode -format
+/usr/local/hadoop/sbin/start-dfs.sh
 
 ## install Hive
 wget http://ftp.tc.edu.tw/pub/Apache/hive/hive-1.2.1/apache-hive-1.2.1-bin.tar.gz
