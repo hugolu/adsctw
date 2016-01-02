@@ -4,6 +4,8 @@
 ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ssh-keyscan -t rsa 0.0.0.0 >> ~/.ssh/known_hosts
+ssh-keyscan -t rsa 127.0.0.1 >> ~/.ssh/known_hosts
+ssh-keyscan -t rsa localhost >> ~/.ssh/known_hosts
 
 ## install Java
 sudo apt-get -y install openjdk-7-jdk
@@ -23,9 +25,9 @@ echo "export PATH=\$PATH:\$HADOOP_HOME/bin:\$HADOOP_HOME/sbin" >> ~/.bashrc
 echo "export CLASSPATH=\$CLASSPATH:\$(hadoop classpath)" >> ~/.bashrc
 source ~/.bashrc
 
-cp -f core-site.xml /usr/local/hadoop/etc/hadoop/core-site.xml
-cp -f hdfs-site.xml /usr/local/hadoop/etc/hadoop/hdfs-site.xml
-cp -f hadoop-env.sh /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+sudo cp -f /vagrant/core-site.xml /usr/local/hadoop/etc/hadoop/core-site.xml
+sudo cp -f /vagrant/hdfs-site.xml /usr/local/hadoop/etc/hadoop/hdfs-site.xml
+sudo cp -f /vagrant/hadoop-env.sh /usr/local/hadoop/etc/hadoop/hadoop-env.sh
 
 /usr/local/hadoop/bin/hdfs namenode -format
 /usr/local/hadoop/sbin/start-dfs.sh
