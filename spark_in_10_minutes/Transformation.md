@@ -14,15 +14,17 @@ list: List[Int] = List(1, 2, 3)
 
 scala> val list2 = list.map(n => n*2)
 list2: List[Int] = List(2, 4, 6)
-
-scala> list2.foreach(println)
-2
-4
-6
 ```
 
 ## filter(func)
 Return a new dataset formed by selecting those elements of the source on which func returns true.
+```scala
+scala> val list = List(1, 2, 3)
+list: List[Int] = List(1, 2, 3)
+
+scala> val odds = list.filter(n => n%2!=0)
+odds: List[Int] = List(1, 3)
+```
 
 ## flatMap(func)
 Similar to map, but each input item can be mapped to 0 or more output items (so func should return a Seq rather than a single item).
