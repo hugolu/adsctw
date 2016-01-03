@@ -18,18 +18,46 @@ total: Int = 6
 
 ## collect()
 Return all the elements of the dataset as an array at the driver program. This is usually useful after a filter or other operation that returns a sufficiently small subset of the data.
+```scala
+scala> val nums = sc.parallelize(1 to 4, 2)
+scala> nums.collect()
+res20: Array[Int] = Array(1, 2, 3, 4)
+```
 
 ## count()
 Return the number of elements in the dataset.
+```scala
+scala> val nums = sc.parallelize(1 to 9)
+scala> val count = nums.count()
+count: Long = 9
+```
 
 ## first()
 Return the first element of the dataset (similar to take(1)).
+```scala
+scala> val nums = sc.parallelize(1 to 9)
+scala> val first = nums.first()
+first: Int = 1
+```
 
 ## take(n)
 Return an array with the first n elements of the dataset.
+```scala
+scala> import org.apache.spark.mllib.random.RandomRDDs._
+scala> val u = normalRDD(sc, 100L, 10)
+scala> u.take(5)
+res2: Array[Double] = Array(-1.14162365738377, -0.43652608825695194, -0.5909678874166858, -0.7982175744544066, -0.03379305504514526)
+```
 
 ## takeSample(withReplacement, num, [seed])
 Return an array with a random sample of num elements of the dataset, with or without replacement, optionally pre-specifying a random number generator seed.
+```scala
+scala> val nums = sc.parallelize(1 to 9)
+scala> nums.takeSample(true, 5)
+res19: Array[Int] = Array(7, 9, 1, 9, 2)
+scala> nums.takeSample(false, 5)
+res20: Array[Int] = Array(8, 7, 4, 9, 6)
+```
 
 ## takeOrdered(n, [ordering])
 Return the first n elements of the RDD using either their natural order or a custom comparator.
