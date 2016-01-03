@@ -28,6 +28,13 @@ odds: List[Int] = List(1, 3)
 
 ## flatMap(func)
 Similar to map, but each input item can be mapped to 0 or more output items (so func should return a Seq rather than a single item).
+```scala
+scala> val list = List(List(1,2,3), List(4,5,6), List(7,8,9))
+list: List[List[Int]] = List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9))
+
+scala> val nums = list.flatMap(l => l.map(n => n*n))
+nums: List[Int] = List(1, 4, 9, 16, 25, 36, 49, 64, 81)
+```
 
 ## mapPartitions(func)
 Similar to map, but runs separately on each partition (block) of the RDD, so func must be of type Iterator<T> => Iterator<U> when running on an RDD of type T.
