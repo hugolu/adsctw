@@ -138,6 +138,19 @@ wordCounts: Array[(String, Int)] = Array((one,1), (three,3), (two,2))
 
 ## join(otherDataset, [numTasks])
 When called on datasets of type (K, V) and (K, W), returns a dataset of (K, (V, W)) pairs with all pairs of elements for each key. Outer joins are supported through leftOuterJoin, rightOuterJoin, and fullOuterJoin.
+```scala
+scala> val prices = sc.parallelize(List(("banana", 10), ("apple", 15), ("orange", 7)))
+scala> val colors = sc.parallelize(List(("apple", "red"), ("banana", "yellow"), ("lime", "green")))
+
+scala> prices.join(colors).collect
+res103: Array[(String, (Int, String))] = Array((banana,(10,yellow)), (apple,(15,red)))
+
+scala> prices.leftOuterJoin(colors).collect
+res104: Array[(String, (Int, Option[String]))] = Array((banana,(10,Some(yellow))), (orange,(7,None)), (apple,(15,Some(red))))
+
+scala> prices.rightOuterJoin(colors).collect
+res105: Array[(String, (Option[Int], String))] = Array((banana,(Some(10),yellow)), (apple,(Some(15),red)), (lime,(None,green)))
+```
 
 ## cogroup(otherDataset, [numTasks])
 When called on datasets of type (K, V) and (K, W), returns a dataset of (K, (Iterable<V>, Iterable<W>)) tuples. This operation is also called groupWith.
