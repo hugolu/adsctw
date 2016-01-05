@@ -154,6 +154,29 @@ res105: Array[(String, (Option[Int], String))] = Array((banana,(Some(10),yellow)
 
 ## cogroup(otherDataset, [numTasks])
 When called on datasets of type (K, V) and (K, W), returns a dataset of (K, (Iterable<V>, Iterable<W>)) tuples. This operation is also called groupWith.
+```scala
+scala> val a = sc.parallelize(List(1,2,1,3))
+scala> val b = a.map((_,"b"))
+scala> val c = a.map((_,"c"))
+scala> val d = b.cogroup(c)
+
+scala> b.foreach(println)
+(1,b)
+(2,b)
+(1,b)
+(3,b)
+
+scala> c.foreach(println)
+(1,c)
+(2,c)
+(1,c)
+(3,c)
+
+scala> d.sortByKey().foreach(println)
+(1,(CompactBuffer(b, b),CompactBuffer(c, c)))
+(2,(CompactBuffer(b),CompactBuffer(c)))
+(3,(CompactBuffer(b),CompactBuffer(c)))
+```
 
 ## cartesian(otherDataset)
 When called on datasets of types T and U, returns a dataset of (T, U) pairs (all pairs of elements).
