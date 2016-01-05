@@ -56,6 +56,15 @@ res2: Array[Int] = Array(1, 2, 3, 5, 6, 7, 9, 10, 11)
 
 ## sample(withReplacement, fraction, seed)
 Sample a fraction fraction of the data, with or without replacement, using a given random number generator seed.
+```scala
+scala> val numbers = sc.parallelize(1 to 9)
+
+scala> val samples = numbers.sample(false, .2).collect
+samples: Array[Int] = Array(2, 5, 7)
+
+scala> val samples = numbers.sample(false, .2).collect
+samples: Array[Int] = Array(3, 6)
+```
 
 ## union(otherDataset)
 Return a new dataset that contains the union of the elements in the source dataset and the argument.
@@ -97,9 +106,23 @@ g4: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
 When called on a dataset of (K, V) pairs, returns a dataset of (K, Iterable<V>) pairs. 
 Note: If you are grouping in order to perform an aggregation (such as a sum or average) over each key, using reduceByKey or aggregateByKey will yield much better performance. 
 Note: By default, the level of parallelism in the output depends on the number of partitions of the parent RDD. You can pass an optional numTasks argument to set a different number of tasks.
+```scala
+scala> val words = Array("one", "two", "two", "three", "three", "three")
+scala> val wordPairs = sc.parallelize(words).map(word => (word, 1))
+scala> val wordCountsWithGroup = wordPairs.groupByKey.map(t => (t._1, t._2.sum)).collect
+wordCountsWithGroup: Array[(String, Int)] = Array((two,2), (one,1), (three,3))
+```
 
 ## reduceByKey(func, [numTasks])
 When called on a dataset of (K, V) pairs, returns a dataset of (K, V) pairs where the values for each key are aggregated using the given reduce function func, which must be of type (V,V) => V. Like in groupByKey, the number of reduce tasks is configurable through an optional second argument.
+```scala
+scala> val words = Array("one", "two", "two", "three", "three", "three")
+scala> val wordPairs = sc.parallelize(words).map(word => (word, 1))
+scala> val wordCountsWithReduce = wordPairs.reduceByKey(_ + _).collect()
+wordCountsWithReduce: Array[(String, Int)] = Array((two,2), (one,1), (three,3))
+```
+
+> 根據[Avoid GroupByKey](https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html)的說法，reduceByKey()的做法法才能有效減少網路流量。
 
 ## aggregateByKey(zeroValue)(seqOp, combOp, [numTasks])
 When called on a dataset of (K, V) pairs, returns a dataset of (K, U) pairs where the values for each key are aggregated using the given combine functions and a neutral "zero" value. Allows an aggregated value type that is different than the input value type, while avoiding unnecessary allocations. Like in groupByKey, the number of reduce tasks is configurable through an optional second argument.
