@@ -40,18 +40,10 @@ nums: List[Int] = List(1, 4, 9, 16, 25, 36, 49, 64, 81)
 ## mapPartitions(func)
 Similar to map, but runs separately on each partition (block) of the RDD, so func must be of type Iterator<T> => Iterator<U> when running on an RDD of type T.
 ```scala
-scala> val a = sc.parallelize(1 to 9, 3) // 3 partitions
-
-scala> def myfunc(iter: Iterator[Int]): Iterator[Int] = { // make a stack
-  var res = List[Int]()
-  while (iter.hasNext) {
-    res ::= iter.next
-  }
-  res.iterator
-}
-
-scala> a.mapPartitions(myfunc).collect // apply each patition with myfunc()
-res1: Array[Int] = Array(3, 2, 1, 6, 5, 4, 9, 8, 7)
+scala> val values = sc.parallelize(1 to 9, 3) // 3 partitions
+scala> def myfunc(iter:Iterator[Int]):Iterator[Int] = iter.toList.reverse.iterator // reverse elements in each partition
+scala> values.mapPartitions(myfunc).collect // apply each patition with myfunc()
+res0: Array[Int] = Array(3, 2, 1, 6, 5, 4, 9, 8, 7)
 ```
 
 ## mapPartitionsWithIndex(func)
