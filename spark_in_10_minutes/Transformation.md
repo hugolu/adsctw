@@ -48,18 +48,50 @@ res0: Array[Int] = Array(3, 2, 1, 6, 5, 4, 9, 8, 7)
 
 ## mapPartitionsWithIndex(func)
 Similar to mapPartitions, but also provides func with an integer value representing the index of the partition, so func must be of type (Int, Iterator<T>) => Iterator<U> when running on an RDD of type T.
+```scala
+scala> val values = sc.parallelize(1 to 9, 3) // 3 partitions
+scala> values.mapPartitionsWithIndex((index: Int, it: Iterator[Int]) => it.toList.map(x => index+x).iterator).collect
+res2: Array[Int] = Array(1, 2, 3, 5, 6, 7, 9, 10, 11)
+```
 
 ## sample(withReplacement, fraction, seed)
 Sample a fraction fraction of the data, with or without replacement, using a given random number generator seed.
 
 ## union(otherDataset)
 Return a new dataset that contains the union of the elements in the source dataset and the argument.
+```scala
+scala> val g1 = sc.parallelize(1 to 6)
+scala> val g2 = sc.parallelize(3 to 9)
+
+scala> val g3 = g1.union(g2).collect
+g3: Array[Int] = Array(1, 2, 3, 4, 5, 6, 3, 4, 5, 6, 7, 8, 9)
+```
 
 ## intersection(otherDataset)
 Return a new RDD that contains the intersection of elements in the source dataset and the argument.
+```scala
+scala> val g1 = sc.parallelize(1 to 6)
+scala> val g2 = sc.parallelize(3 to 9)
+
+scala> val g3 = g1.intersection(g2).collect
+g3: Array[Int] = Array(4, 6, 3, 5)
+
+scala> val g4 = g1.intersection(g2).collect.sorted
+g4: Array[Int] = Array(3, 4, 5, 6)
+```
 
 ## distinct([numTasks]))
 Return a new dataset that contains the distinct elements of the source dataset.
+```scala
+scala> val g1 = sc.parallelize(1 to 6)
+scala> val g2 = sc.parallelize(3 to 9)
+
+scala> val g3 = g1.union(g2).distinct.collect
+g3: Array[Int] = Array(4, 6, 8, 2, 1, 3, 7, 9, 5)
+
+scala> val g4 = g1.union(g2).distinct.collect.sorted
+g4: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
+```
 
 ## groupByKey([numTasks])
 When called on a dataset of (K, V) pairs, returns a dataset of (K, Iterable<V>) pairs. 
