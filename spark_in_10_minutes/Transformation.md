@@ -129,6 +129,12 @@ When called on a dataset of (K, V) pairs, returns a dataset of (K, U) pairs wher
 
 ## sortByKey([ascending], [numTasks])
 When called on a dataset of (K, V) pairs where K implements Ordered, returns a dataset of (K, V) pairs sorted by keys in ascending or descending order, as specified in the boolean ascending argument.
+```scala
+scala> val words = Array("one", "two", "two", "three", "three", "three")
+scala> val wordPairs = sc.parallelize(words).map(word => (word, 1))
+scala> val wordCounts = wordPairs.reduceByKey(_ + _).sortByKey().collect
+wordCounts: Array[(String, Int)] = Array((one,1), (three,3), (two,2))
+```
 
 ## join(otherDataset, [numTasks])
 When called on datasets of type (K, V) and (K, W), returns a dataset of (K, (V, W)) pairs with all pairs of elements for each key. Outer joins are supported through leftOuterJoin, rightOuterJoin, and fullOuterJoin.
