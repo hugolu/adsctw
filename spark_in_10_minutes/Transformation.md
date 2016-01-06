@@ -126,6 +126,31 @@ wordCountsWithReduce: Array[(String, Int)] = Array((two,2), (one,1), (three,3))
 
 ## aggregateByKey(zeroValue)(seqOp, combOp, [numTasks])
 When called on a dataset of (K, V) pairs, returns a dataset of (K, U) pairs where the values for each key are aggregated using the given combine functions and a neutral "zero" value. Allows an aggregated value type that is different than the input value type, while avoiding unnecessary allocations. Like in groupByKey, the number of reduce tasks is configurable through an optional second argument.
+```scala
+scala> val pairRDD = sc.parallelize(List( ("cat",2), ("cat", 5), ("mouse", 4),("cat", 12), ("dog", 12), ("mouse", 2)), 2)
+
+// lets have a look at what is in the partitions
+scala> def myfunc(index: Int, iter: Iterator[(String, Int)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+scala> pairRDD.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: (cat,2)]
+[partID:0, val: (cat,5)]
+[partID:0, val: (mouse,4)]
+[partID:1, val: (cat,12)]
+[partID:1, val: (dog,12)]
+[partID:1, val: (mouse,2)]
+
+scala> pairRDD.aggregateByKey(0)(math.max(_, _), _ + _).foreach(println)
+(dog,12)
+(cat,17)
+(mouse,6)
+
+scala> pairRDD.aggregateByKey(100)(math.max(_, _), _ + _).foreach(println)
+(dog,100)
+(cat,200)
+(mouse,200)
+```
 
 ## sortByKey([ascending], [numTasks])
 When called on a dataset of (K, V) pairs where K implements Ordered, returns a dataset of (K, V) pairs sorted by keys in ascending or descending order, as specified in the boolean ascending argument.
