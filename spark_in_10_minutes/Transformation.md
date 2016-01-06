@@ -230,10 +230,10 @@ res32: Int = 2
 ## repartitionAndSortWithinPartitions(partitioner)
 Repartition the RDD according to the given partitioner and, within each resulting partition, sort records by their keys. This is more efficient than calling repartition and then sorting within each partition because it can push the sorting down into the shuffle machinery.
 ```scala
-val randRDD = sc.parallelize(List( (2,"cat"), (6, "mouse"),(7, "cup"), (3, "book"), (4, "tv"), (1, "screen"), (5, "heater")), 3)
-val rPartitioner = new org.apache.spark.RangePartitioner(3, randRDD)
+scala> val randRDD = sc.parallelize(List( (2,"cat"), (6, "mouse"),(7, "cup"), (3, "book"), (4, "tv"), (1, "screen"), (5, "heater")), 3)
+scala> val rPartitioner = new org.apache.spark.RangePartitioner(3, randRDD)
 
-def myfunc(index: Int, iter: Iterator[(Int, String)]) : Iterator[String] = {
+scala> def myfunc(index: Int, iter: Iterator[(Int, String)]) : Iterator[String] = {
   iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
 }
 
