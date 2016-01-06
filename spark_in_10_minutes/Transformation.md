@@ -205,9 +205,27 @@ res19: Array[String] = Array(3, 6, 9)
 
 ## coalesce(numPartitions)
 Decrease the number of partitions in the RDD to numPartitions. Useful for running operations more efficiently after filtering down a large dataset.
+```scala
+scala> val y = sc.parallelize(1 to 10, 10)
+scala> y.partitions.length
+res22: Int = 10
+
+scala> val z = y.coalesce(2, false)
+scala> z.partitions.length
+res23: Int = 2
+```
 
 ## repartition(numPartitions)
 Reshuffle the data in the RDD randomly to create either more or fewer partitions and balance it across them. This always shuffles all data over the network.
+```scala
+scala> val y = sc.parallelize(1 to 10, 10)
+scala> y.partitions.length
+res31: Int = 10
+
+scala> val z = y.repartition(2)
+scala> z.partitions.length
+res32: Int = 2
+```
 
 ## repartitionAndSortWithinPartitions(partitioner)
 Repartition the RDD according to the given partitioner and, within each resulting partition, sort records by their keys. This is more efficient than calling repartition and then sorting within each partition because it can push the sorting down into the shuffle machinery.
