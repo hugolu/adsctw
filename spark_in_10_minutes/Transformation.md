@@ -6,6 +6,7 @@
 - [Transformations(中)](https://taiwansparkusergroup.gitbooks.io/spark-programming-guide-zh-tw/content/programming-guide/rdds/transformations.html)
 - [Transformations(英)](http://spark.apache.org/docs/latest/programming-guide.html#transformations)
 - [Apache Spark: Examples of Transformations](http://www.supergloo.com/fieldnotes/apache-spark-examples-of-transformations/)
+- [RDD function calls](http://homepage.cs.latrobe.edu.au/zhe/ZhenHeSparkRDDAPIExamples.html)
 
 ## map(func)
 Return a new distributed dataset formed by passing each element of the source through a function func.
