@@ -180,9 +180,28 @@ scala> d.sortByKey().foreach(println)
 
 ## cartesian(otherDataset)
 When called on datasets of types T and U, returns a dataset of (T, U) pairs (all pairs of elements).
+```scala
+scala> val x = sc.parallelize(List('A','B','C'))
+scala> val y = sc.parallelize(List(1,2,3))
+
+scala> x.cartesian(y).count
+res11: Long = 9
+
+scala> x.cartesian(y).collect
+res12: Array[(Char, Int)] = Array((A,1), (A,2), (A,3), (B,1), (B,2), (B,3), (C,1), (C,2), (C,3))
+```
 
 ## pipe(command, [envVars])
 Pipe each partition of the RDD through a shell command, e.g. a Perl or bash script. RDD elements are written to the process's stdin and lines output to its stdout are returned as an RDD of strings.
+```scala
+scala> val a = sc.parallelize(1 to 9, 3)
+
+scala> a.pipe("head -n 1").collect
+res18: Array[String] = Array(1, 4, 7)
+
+scala> a.pipe("tail -n 1").collect
+res19: Array[String] = Array(3, 6, 9)
+```
 
 ## coalesce(numPartitions)
 Decrease the number of partitions in the RDD to numPartitions. Useful for running operations more efficiently after filtering down a large dataset.
