@@ -286,3 +286,44 @@ scala> partitioned.mapPartitionsWithIndex(myfunc).foreach(println)
 [partID:2, val: (6,mouse)]
 [partID:2, val: (7,cup)]
 ```
+
+## aggregate
+The aggregate function allows the user to apply two different reduce functions to the RDD. The first reduce function is applied within each partition to reduce the data within each partition into a single result. The second reduce function is used to combine the different reduced results of all partitions together to arrive at one final result. The ability to have two separate reduce functions for intra partition versus across partition reducing adds a lot of flexibility. For example the first reduce function can be the max function and the second one can be the sum function. The user also specifies an initial value. Here are some important facts.
+
+- The initial value is applied at both levels of reduce. So both at the intra partition reduction and across partition reduction.
+- Both reduce functions have to be commutative and associative.
+- Do not assume any execution order for either partition computations or combining partitions.
+- Why would one want to use two input data types? Let us assume we do an archaeological site survey using a metal detector. While walking through the site we take GPS coordinates of important findings based on the output of the metal detector. Later, we intend to draw an image of a map that highlights these locations using the aggregate function. In this case the zeroValue could be an area map with no highlights. The possibly huge set of input data is stored as GPS coordinates across many partitions. seqOp (first reducer) could convert the GPS coordinates to map coordinates and put a marker on the map at the respective position. combOp (second reducer) will receive these highlights as partial maps and combine them into a single final output map.
+
+```scala
+scala> val z = sc.parallelize(List(1,2,3,4,5,6), 2)
+
+// lets first print out the contents of the RDD with partition labels
+scala> def myfunc(index: Int, iter: Iterator[(Int)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+
+scala> z.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: 1]
+[partID:0, val: 2]
+[partID:0, val: 3]
+[partID:1, val: 4]
+[partID:1, val: 5]
+[partID:1, val: 6]
+
+scala> z.aggregate(0)(math.max(_, _), _ + _)
+res1: Int = 9
+// This example returns 9 since the initial value is 0
+// reduce of partition 0 will be max(0, 1, 2, 3) = 3
+// reduce of partition 1 will be max(0, 4, 5, 6) = 6
+// final reduce across partitions will be 0 + 3 + 6 = 9
+// note the final reduce include the initial value
+
+scala> z.aggregate(5)(math.max(_, _), _ + _)
+res2: Int = 16
+// This example returns 16 since the initial value is 5
+// reduce of partition 0 will be max(5, 1, 2, 3) = 5
+// reduce of partition 1 will be max(5, 4, 5, 6) = 6
+// final reduce across partitions will be 5 + 5 + 6 = 16
+// note the final reduce include the initial value
+```
