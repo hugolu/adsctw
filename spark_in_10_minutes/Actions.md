@@ -103,9 +103,33 @@ $ head -n3 nums/part-0000*
 
 ## saveAsSequenceFile(path) (Java and Scala)
 Write the elements of the dataset as a Hadoop SequenceFile in a given path in the local filesystem, HDFS or any other Hadoop-supported file system. This is available on RDDs of key-value pairs that implement Hadoop's Writable interface. In Scala, it is also available on types that are implicitly convertible to Writable (Spark includes conversions for basic types like Int, Double, String, etc).
+```scala
+scala> val v = sc.parallelize(Array(("owl",3), ("gnu",4), ("dog",1), ("cat",2), ("ant",5)), 2)
+scala> v.saveAsSequenceFile("hd_seq_file")
+```
+```
+$ hadoop fs -get hd_seq_file
+16/01/07 09:03:11 WARN hdfs.DFSClient: DFSInputStream has been closed already
+16/01/07 09:03:11 WARN hdfs.DFSClient: DFSInputStream has been closed already
+16/01/07 09:03:11 WARN hdfs.DFSClient: DFSInputStream has been closed already
+$ ls hd_seq_file/
+part-00000  part-00001  _SUCCESS
+```
 
 ## saveAsObjectFile(path) (Java and Scala)
 Write the elements of the dataset in a simple format using Java serialization, which can then be loaded using SparkContext.objectFile().
+```scala
+scala> val v = sc.parallelize(Array(("owl",3), ("gnu",4), ("dog",1), ("cat",2), ("ant",5)), 2)
+scala> v.saveAsObjectFile("hd_obj_file")
+```
+```shell
+$ hadoop fs -get hd_obj_file
+16/01/07 09:06:12 WARN hdfs.DFSClient: DFSInputStream has been closed already
+16/01/07 09:06:12 WARN hdfs.DFSClient: DFSInputStream has been closed already
+16/01/07 09:06:12 WARN hdfs.DFSClient: DFSInputStream has been closed already
+$ ls hd_obj_file/
+part-00000  part-00001  _SUCCESS
+```
 
 ## countByKey()
 Only available on RDDs of type (K, V). Returns a hashmap of (K, Int) pairs with the count of each key.
