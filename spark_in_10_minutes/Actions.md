@@ -133,7 +133,17 @@ part-00000  part-00001  _SUCCESS
 
 ## countByKey()
 Only available on RDDs of type (K, V). Returns a hashmap of (K, Int) pairs with the count of each key.
+```scala
+scala> val c = sc.parallelize(List((3, "Gnu"), (3, "Yak"), (5, "Mouse"), (3, "Dog")), 2)
+scala> c.countByKey
+res24: scala.collection.Map[Int,Long] = Map(3 -> 3, 5 -> 1)
+```
 
 ## foreach(func)
 Run a function func on each element of the dataset. This is usually done for side effects such as updating an Accumulator or interacting with external storage systems. 
 Note: modifying variables other than Accumulators outside of the foreach() may result in undefined behavior. See Understanding closures for more details.
+```scala
+scala> val nums = sc.parallelize(1 to 9, 3)
+scala> nums.foreach(print)
+123456789
+```
