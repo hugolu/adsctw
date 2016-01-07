@@ -147,3 +147,13 @@ scala> val nums = sc.parallelize(1 to 9, 3)
 scala> nums.foreach(print)
 123456789
 ```
+
+## foreachPartition
+Executes an parameterless function for each partition. Access to the data items contained in the partition is provided via the iterator argument.
+```scala
+scala> val nums = sc.parallelize(1 to 9, 3)
+scala> nums.foreachPartition(x => println(x.reduce(_+_)))
+6 // =1+2+3
+15 // =4+5+6
+24 // =7+8+9
+```
