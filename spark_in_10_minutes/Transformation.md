@@ -295,6 +295,9 @@ The aggregate function allows the user to apply two different reduce functions t
 - Do not assume any execution order for either partition computations or combining partitions.
 - Why would one want to use two input data types? Let us assume we do an archaeological site survey using a metal detector. While walking through the site we take GPS coordinates of important findings based on the output of the metal detector. Later, we intend to draw an image of a map that highlights these locations using the aggregate function. In this case the zeroValue could be an area map with no highlights. The possibly huge set of input data is stored as GPS coordinates across many partitions. seqOp (first reducer) could convert the GPS coordinates to map coordinates and put a marker on the map at the respective position. combOp (second reducer) will receive these highlights as partial maps and combine them into a single final output map.
 
+Listing Variants
+- def aggregate[U: ClassTag](zeroValue: U)(seqOp: (U, T) => U, combOp: (U, U) => U): U
+
 ```scala
 scala> val z = sc.parallelize(List(1,2,3,4,5,6), 2)
 
@@ -325,5 +328,84 @@ res2: Int = 16
 // reduce of partition 0 will be max(5, 1, 2, 3) = 5
 // reduce of partition 1 will be max(5, 4, 5, 6) = 6
 // final reduce across partitions will be 5 + 5 + 6 = 16
+// note the final reduce include the initial value
+```
+```scala
+scala> def myfunc[T](index: Int, iter: Iterator[(T)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+
+scala> val z = sc.parallelize(List("a","b","c","d","e","f"),2)
+scala> z.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: a]
+[partID:0, val: b]
+[partID:0, val: c]
+[partID:1, val: d]
+[partID:1, val: e]
+[partID:1, val: f]
+
+scala> val result = z.aggregate("")(_+_, _+_)
+result: String = abcdef
+// the initial value is ""
+// reduce of partition 0 will be "" + "a" + "b" + "c" = "abc"
+// reduce of partition 1 will be "" + "d" + "e" + "f" = "def"
+// final reduce across partitions will be "" + "abc" + "def" = "abcdef"
+// note the final reduce include the initial value
+
+scala> val result = z.aggregate("x")(_+_, _+_)
+result: String = xxabcxdef
+// the initial value is "x"
+// reduce of partition 0 will be "x" + "a" + "b" + "c" = "xabc"
+// reduce of partition 1 will be "x" + "d" + "e" + "f" = "xdef"
+// final reduce across partitions will be "x" + "xabc" + "xdef" = "xxabcxdef"
+// note the final reduce include the initial value
+```
+```scala
+scala> def myfunc[T](index: Int, iter: Iterator[(T)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+
+scala> val z = sc.parallelize(List("12","23","345","4567"),2)
+scala> z.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: 12]
+[partID:0, val: 23]
+[partID:1, val: 345]
+[partID:1, val: 4567]
+
+scala> val result = z.aggregate("")((x,y) => math.max(x.length, y.length).toString, (x,y) => x + y)
+result: String = 24
+// the initial value is ""
+// reduce of partition 0 will be max("".length, "12".length).toString="2", max("2".length, "34".length).toString="2"
+// reduce of partition 1 will be max("".length, "345".length).toString="3", max("3".length, "4567".length).toString = "4"
+// final reduce across partitions will be "" + "2" + "4" = "24"
+// note the final reduce include the initial value
+
+scala> val result = z.aggregate("")((x,y) => math.min(x.length, y.length).toString, (x,y) => x + y)
+res2: String = 11
+// the initial value is ""
+// reduce of partition 0 will be min("".length, "12".length).toString="0", min("0".length, "23".length).toString = "1"
+// reduce of partition 1 will be min("".length, "345".length).toString="0", min("0".length, "4567".length).toString = "1"
+// final reduce across partitions will be "" + "1" + "1" = "11"
+// note the final reduce include the initial value
+```
+```scala
+scala> def myfunc[T](index: Int, iter: Iterator[(T)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+
+scala> val z = sc.parallelize(List("12","23","345",""),2)
+scala> z.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: 12]
+[partID:0, val: 23]
+[partID:1, val: 345]
+[partID:1, val: ]
+
+scala> z.aggregate("")((x,y) => math.min(x.length, y.length).toString, (x,y) => x + y)
+scala> val result = z.aggregate("")((x,y) => math.min(x.length, y.length).toString, (x,y) => x + y)
+result: String = 10
+// the initial value is ""
+// reduce of partition 0 will be min("".length, "12".length).toString="0", min("0".length, "23".length).toString = "1"
+// reduce of partition 1 will be min("".length, "345".length).toString="0", min("0".length, "".length).toString = "0"
+// final reduce across partitions will be "" + "1" + "0" = "10"
 // note the final reduce include the initial value
 ```
