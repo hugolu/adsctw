@@ -125,6 +125,36 @@ wordCountsWithReduce: Array[(String, Int)] = Array((two,2), (one,1), (three,3))
 
 > 根據[Avoid GroupByKey](https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html)的說法，reduceByKey()的做法法才能有效減少網路流量。
 
+## sortBy
+This function sorts the input RDD's data and stores it in a new RDD. The first parameter requires you to specify a function which  maps the input data into the key that you want to sortBy. The second parameter (optional) specifies whether you want the data to be sorted in ascending or descending order.
+
+Listing Variants
+- def sortBy[K](f: (T) ⇒ K, ascending: Boolean = true, numPartitions: Int = this.partitions.size)(implicit ord: Ordering[K], ctag: ClassTag[K]): RDD[T]
+```scala
+scala> val nums = sc.parallelize(Array(5, 7, 1, 3, 2, 1))
+
+scala> nums.sortBy(n => +n, true).collect
+res40: Array[Int] = Array(1, 1, 2, 3, 5, 7)
+
+scala> nums.sortBy(n => -n, true).collect
+res41: Array[Int] = Array(7, 5, 3, 2, 1, 1)
+
+scala> nums.sortBy(n => +n, false).collect
+res42: Array[Int] = Array(7, 5, 3, 2, 1, 1)
+
+scala> nums.sortBy(n => -n, false).collect
+res43: Array[Int] = Array(1, 1, 2, 3, 5, 7)
+```
+```scala
+scala> val z = sc.parallelize(Array(("H", 10), ("A", 26), ("Z", 1), ("L", 5)))
+
+scala> z.sortBy(c => c._1, true).collect
+res44: Array[(String, Int)] = Array((A,26), (H,10), (L,5), (Z,1)) // sort by key
+
+scala> z.sortBy(c => c._2, true).collect
+res45: Array[(String, Int)] = Array((Z,1), (L,5), (H,10), (A,26)) // sort by value
+```
+
 ## sortByKey([ascending], [numTasks])
 When called on a dataset of (K, V) pairs where K implements Ordered, returns a dataset of (K, V) pairs sorted by keys in ascending or descending order, as specified in the boolean ascending argument.
 ```scala
