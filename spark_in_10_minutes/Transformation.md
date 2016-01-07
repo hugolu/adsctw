@@ -125,34 +125,6 @@ wordCountsWithReduce: Array[(String, Int)] = Array((two,2), (one,1), (three,3))
 
 > 根據[Avoid GroupByKey](https://databricks.gitbooks.io/databricks-spark-knowledge-base/content/best_practices/prefer_reducebykey_over_groupbykey.html)的說法，reduceByKey()的做法法才能有效減少網路流量。
 
-## aggregateByKey(zeroValue)(seqOp, combOp, [numTasks])
-When called on a dataset of (K, V) pairs, returns a dataset of (K, U) pairs where the values for each key are aggregated using the given combine functions and a neutral "zero" value. Allows an aggregated value type that is different than the input value type, while avoiding unnecessary allocations. Like in groupByKey, the number of reduce tasks is configurable through an optional second argument.
-```scala
-scala> val pairRDD = sc.parallelize(List( ("cat",2), ("cat", 5), ("mouse", 4),("cat", 12), ("dog", 12), ("mouse", 2)), 2)
-
-// lets have a look at what is in the partitions
-scala> def myfunc(index: Int, iter: Iterator[(String, Int)]) : Iterator[String] = {
-  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
-}
-scala> pairRDD.mapPartitionsWithIndex(myfunc).foreach(println)
-[partID:0, val: (cat,2)]
-[partID:0, val: (cat,5)]
-[partID:0, val: (mouse,4)]
-[partID:1, val: (cat,12)]
-[partID:1, val: (dog,12)]
-[partID:1, val: (mouse,2)]
-
-scala> pairRDD.aggregateByKey(0)(math.max(_, _), _ + _).foreach(println)
-(dog,12)
-(cat,17)
-(mouse,6)
-
-scala> pairRDD.aggregateByKey(100)(math.max(_, _), _ + _).foreach(println)
-(dog,100)
-(cat,200)
-(mouse,200)
-```
-
 ## sortByKey([ascending], [numTasks])
 When called on a dataset of (K, V) pairs where K implements Ordered, returns a dataset of (K, V) pairs sorted by keys in ascending or descending order, as specified in the boolean ascending argument.
 ```scala
@@ -407,5 +379,53 @@ result: String = 10
 // reduce of partition 0 will be min("".length, "12".length).toString="0", min("0".length, "23".length).toString = "1"
 // reduce of partition 1 will be min("".length, "345".length).toString="0", min("0".length, "".length).toString = "0"
 // final reduce across partitions will be "" + "1" + "0" = "10"
+// note the final reduce include the initial value
+```
+
+## aggregateByKey(zeroValue)(seqOp, combOp, [numTasks])
+When called on a dataset of (K, V) pairs, returns a dataset of (K, U) pairs where the values for each key are aggregated using the given combine functions and a neutral "zero" value. Allows an aggregated value type that is different than the input value type, while avoiding unnecessary allocations. Like in groupByKey, the number of reduce tasks is configurable through an optional second argument.
+```scala
+scala> val pairRDD = sc.parallelize(List( ("cat",2), ("cat", 5), ("mouse", 4),("cat", 12), ("dog", 12), ("mouse", 2)), 2)
+
+// lets have a look at what is in the partitions
+scala> def myfunc(index: Int, iter: Iterator[(String, Int)]) : Iterator[String] = {
+  iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+}
+scala> pairRDD.mapPartitionsWithIndex(myfunc).foreach(println)
+[partID:0, val: (cat,2)]
+[partID:0, val: (cat,5)]
+[partID:0, val: (mouse,4)]
+[partID:1, val: (cat,12)]
+[partID:1, val: (dog,12)]
+[partID:1, val: (mouse,2)]
+
+scala> pairRDD.aggregateByKey(0)(math.max(_, _), _ + _).foreach(println)
+(dog,12)
+(cat,17)
+(mouse,6)
+// the initial value is 0
+// reduce of partition 0 will be (cat, max(0,2,5)=5), (mouse, max(0,4)=4)
+// reduce of partition 1 will be (cat, max(0,12)=12), (dog, max(0,12)=12), (mouse, max(0,2)=2)
+// final reduce across partitions will be (dog, 12=12), (cat, 5+12=17), (mouse, 4+2=6)
+// note the final reduce include the initial value
+
+scala> pairRDD.aggregateByKey(10)(math.max(_, _), _ + _).foreach(println)
+(dog,12)
+(cat,22)
+(mouse,20)
+// the initial value is 10
+// reduce of partition 0 will be (cat, max(10,2,5)=10), (mouse, max(10,4)=10)
+// reduce of partition 1 will be (cat, max(10,12)=12), (dog, max(10,12)=12), (mouse, max(10,2)=10)
+// final reduce across partitions will be (dog, 12=12), (cat, 10+12=22), (mouse, 10+10=20)
+// note the final reduce include the initial value
+
+scala> pairRDD.aggregateByKey(100)(math.max(_, _), _ + _).foreach(println)
+(dog,100)
+(cat,200)
+(mouse,200)
+// the initial value is 100
+// reduce of partition 0 will be (cat, max(100,2,5)=100), (mouse, max(100,4)=100)
+// reduce of partition 1 will be (cat, max(100,12)=100), (dog, max(100,12)=100), (mouse, max(100,2)=100)
+// final reduce across partitions will be (dog, 100), (cat, 100+100=200), (mouse, 100+100=200)
 // note the final reduce include the initial value
 ```
