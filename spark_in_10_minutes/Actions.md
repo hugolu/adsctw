@@ -61,9 +61,45 @@ res20: Array[Int] = Array(8, 7, 4, 9, 6)
 
 ## takeOrdered(n, [ordering])
 Return the first n elements of the RDD using either their natural order or a custom comparator.
+```scala
+scala> val b = sc.parallelize(List("dog", "cat", "ape", "salmon", "gnu"), 2)
+
+scala> b.takeOrdered(6)
+res19: Array[String] = Array(ape, cat, dog, gnu, salmon)
+
+scala> b.takeOrdered(2)
+res20: Array[String] = Array(ape, cat)
+```
 
 ## saveAsTextFile(path)
 Write the elements of the dataset as a text file (or set of text files) in a given directory in the local filesystem, HDFS or any other Hadoop-supported file system. Spark will call toString on each element to convert it to a line of text in the file.
+```scala
+scala> val nums = sc.parallelize(1 to 100, 4)
+scala> nums.saveAsTextFile("nums")
+```
+```shell
+$ hadoop fs -get nums
+$ head -n3 nums/part-0000*
+==> nums/part-00000 <==
+1
+2
+3
+
+==> nums/part-00001 <==
+26
+27
+28
+
+==> nums/part-00002 <==
+51
+52
+53
+
+==> nums/part-00003 <==
+76
+77
+78
+```
 
 ## saveAsSequenceFile(path) (Java and Scala)
 Write the elements of the dataset as a Hadoop SequenceFile in a given path in the local filesystem, HDFS or any other Hadoop-supported file system. This is available on RDDs of key-value pairs that implement Hadoop's Writable interface. In Scala, it is also available on types that are implicitly convertible to Writable (Spark includes conversions for basic types like Int, Double, String, etc).
