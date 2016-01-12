@@ -10,4 +10,38 @@
 | [Pair] | PairRDDFunctions | 這些擴充的方法能處理 tuple 結構，第一個項目是key，第二個項目是value。 |
 | [Ordered] | OrderedRDDFunctions | 這些擴充的方法能處理 key 可以排序的 tuple 結構。 |
 | [SeqFile] | SequenceFileRDDFunctions | 這些擴充的方法讓使用者可以從RDD產生Hadoop sequence file。 (把記憶體上的資料結構寫到檔案中，之後讀出能還原成原先的模樣) |
+___
 
+## aggregate
+
+The aggregate function allows the user to apply two different reduce functions to the RDD. 
+The first reduce function is applied within each partition to reduce the data within each partition into a single result. 
+The second reduce function is used to combine the different reduced results of all partitions together to arrive at one final result. 
+The ability to have two separate reduce functions for intra partition versus across partition reducing adds a lot of flexibility. For example the first reduce function can be the max function and the second one can be the sum function. The user also specifies an initial value. Here are some important facts.
+
+- The initial value is applied at both levels of reduce. So both at the intra partition reduction and across partition reduction.
+- Both reduce functions have to be commutative and associative.
+- Do not assume any execution order for either partition computations or combining partitions.
+- Why would one want to use two input data types? Let us assume we do an archaeological site survey using a metal detector. While walking through the site we take GPS coordinates of important findings based on the output of the metal detector. Later, we intend to draw an image of a map that highlights these locations using the aggregate function. In this case the zeroValue could be an area map with no highlights. The possibly huge set of input data is stored as GPS coordinates across many partitions. seqOp (first reducer) could convert the GPS coordinates to map coordinates and put a marker on the map at the respective position. combOp (second reducer) will receive these highlights as partial maps and combine them into a single final output map.
+
+定義
+```
+def aggregate[U: ClassTag](zeroValue: U)(seqOp: (U, T) => U, combOp: (U, U) => U): U
+```
+
+範例1
+```
+scala> val z = sc.parallelize(List(1,2,3,4,5,6), 2)
+scala> z.aggregate(0)(math.max(_, _), _ + _)
+res0: Int = 9
+```
+- 初始值
+  - Partition 0: 1, 2, 3
+  - Partition 1: 4, 5, 6
+- 第一次 reduce
+  - Partition 0: max(0, 1, 2, 3) = 3
+  - Partition 1: max(0, 4, 5, 6) = 6
+- 第二次 reduce 
+  - 3 + 6 = 9
+
+<< 未完待續 >>
